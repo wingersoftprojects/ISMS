@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <h:form>
+            <p:panel header="Delete/View" rendered="#{staffBean.staff!=null}">
+                <p:panelGrid columns="2">
+                    <p:panelGrid columns="1">
+                        <p:panel header="Bio Data">    
+                            <p:panelGrid columns="2">
+                                <!--<h:outputText value="Staff type:"/>
+                                <h:outputText value="#{staffBean.staff.staff_type.staff_type_name}" title="Staff_type"/>-->
+                                <h:outputText value="DOB:"/>
+                                <h:outputText value="#{staffBean.staff.pp_date_of_birth}" title="Passport_date_of_birth">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                                <h:outputText value="Gender:"/>
+                                <h:outputText value="#{staffBean.staff.pp_sex}" title="Passport_sex"/>
+                                <h:outputText value="Surname:"/>
+                                <h:outputText value="#{staffBean.staff.pp_surname}" title="Passport_surname"/>
+                                <h:outputText value="Given Names:"/>
+                                <h:outputText value="#{staffBean.staff.pp_given_names}" title="Passport_given_names"/>
+                                <h:outputText value="Nationality:"/>
+                                <h:outputText value="#{staffBean.staff.pp_nationality}" title="Passport_nationality"/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel header="Passport">    
+                            <p:panelGrid columns="2">
+                                <!--<h:outputText value="Type:"/>
+                                <h:outputText value="#{staffBean.staff.pp_type}" title="Passport_type"/>
+                                <h:outputText value="Country:"/>
+                                <h:outputText value="#{staffBean.staff.pp_nationality}" title="Passport_country"/>-->
+                                <h:outputText value="Passport No:"/>
+                                <h:outputText value="#{staffBean.staff.pp_passport_no}" title="Passport_passport_no"/>
+                                <!--<h:outputText value="Profession:"/>
+                                <h:outputText value="#{staffBean.staff.pp_profession}" title="Passport_profession"/>-->
+                                <h:outputText value="Issued From:"/>
+                                <h:outputText value="#{staffBean.staff.pp_issuedby}" title="Passport_authority"/>
+                                <!--<h:outputText value="Date of issue:"/>
+                                <h:outputText value="#{staffBean.staff.pp_date_of_issue}" title="Passport_date_of_issue">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>-->
+                                <h:outputText value="Date of expiry:"/>
+                                <h:outputText value="#{staffBean.staff.pp_date_of_expiry}" title="Passport_date_of_expiry">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                                <!--<h:outputText value="Place of birth:"/>
+                                <h:outputText value="#{staffBean.staff.pp_place_of_birth}" title="Passport_place_of_birth"/>-->
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1">
+                        <p:panel header="Employment Details">
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Email:"/>
+                                <h:outputText value="#{staffBean.staff.email}" title="Email"/>
+                                <h:outputText value="Postion:"/>
+                                <h:outputText value="#{staffBean.staff.staff_post.staff_post_name}" title="Post"/>
+                                <h:outputText value="Join date:"/>
+                                <h:outputText value="#{staffBean.staff.join_date}" title="Join_date">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                                <h:outputText value="Exit date:"/>
+                                <h:outputText value="#{staffBean.staff.exit_date}" title="Exit_date">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                                <h:outputText value="Company:"/>
+                                <h:outputText value="#{staffBean.staff.company.company_name}" title="Company"/>
+                                <h:outputText value="Airticket type:"/>
+                                <h:outputText value="#{staffBean.staff.air_ticket_type.air_ticket_type_name}" title="Air_ticket_type"/>
+                                <h:outputText value="Recruitment agent:"/>
+                                <h:outputText value="#{staffBean.staff.recruit_agent.agent_surname.concat(' ').concat(staffBean.staff.recruit_agent.agent_other_names)}" title="Recruit_agent"/>
+                                <h:outputText value="Exit mode:"/>
+                                <h:outputText value="#{staffBean.staff.exit_mode.exit_mode_name}" title="Exit_mode"/>
+                                <h:outputText value="Accomodation type:"/>
+                                <h:outputText value="#{staffBean.staff.accom_type.accommodation_type_name}" title="Accom_type"/>
+                                <h:outputText value="Cabinet:"/>
+                                <h:outputText value="#{staffBean.staff.cabinet_no}#{staffBean.staff.cabinet_section}" title="Cabinet"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:panelGrid>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

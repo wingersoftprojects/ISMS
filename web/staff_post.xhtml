@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(staff_postBean.formstate.equals('edit') or staff_postBean.formstate.equals('add')) and staff_postBean.staff_post!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Staff_post_name:" for="staff_post_name" />
+                                <p:inputText id="staff_post_name" value="#{staff_postBean.staff_post.staff_post_name}" title="Staff_post_name" required="true" requiredMessage="The Staff_post_name field is required."/>
+                                <p:outputLabel value="Is_active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{staff_postBean.staff_post.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{staff_postBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{staff_postBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(staff_postBean.formstate.equals('delete') or staff_postBean.formstate.equals('view')) and staff_postBean.staff_post!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{staff_postBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Staff_post_name:"/>
+                                <h:outputText value="#{staff_postBean.staff_post.staff_post_name}" title="Staff_post_name"/>
+                                <h:outputText value="Is_active:"/>
+                                <h:outputText value="#{staff_postBean.staff_post.is_active}" title="Is_active"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{staff_postBean.formstate.equals('delete')}" actionListener="#{staff_postBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{staff_postBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{staff_postBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Staff Type" action="#{staff_postBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{staff_postBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{staff_postBean.staff_postList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{staff_postBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{staff_postBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{staff_postBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{staff_postBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{staff_postBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{staff_postBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Staff_post_name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff_post_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is_active"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_active}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

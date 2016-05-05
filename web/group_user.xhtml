@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(group_userBean.formstate.equals('edit') or group_userBean.formstate.equals('add')) and group_userBean.group_user!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="User detail:" for="user_detail" />
+                                <p:selectOneMenu id="user_detail" value="#{group_userBean.group_user.user_detail}" required="true" requiredMessage="The User detail field is required." converter="user_detailConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{user_detailBean.user_detailList}"
+                                                   var="user_detailItem"
+                                                   itemValue="#{user_detailItem}"
+                                                   itemLabel="#{user_detailItem.username}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Group_detail:" for="group_detail" />
+                                <p:selectOneMenu id="group_detail" value="#{group_userBean.group_user.group_detail}" required="true" requiredMessage="The Group_detail field is required." converter="group_detailConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{group_detailBean.group_detailList}"
+                                                   var="group_detailItem"
+                                                   itemValue="#{group_detailItem}"
+                                                   itemLabel="#{group_detailItem.group_name}"
+                                                   />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{group_userBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{group_userBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(group_userBean.formstate.equals('delete') or group_userBean.formstate.equals('view')) and group_userBean.group_user!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{group_userBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="User detail:"/>
+                                <h:outputText value="#{group_userBean.group_user.user_detail.username}" title="User detail"/>
+                                <h:outputText value="Group detail:"/>
+                                <h:outputText value="#{group_userBean.group_user.group_detail.group_name}" title="Group_detail"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{group_userBean.formstate.equals('delete')}" actionListener="#{group_userBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{group_userBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{group_userBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add User to Group" action="#{group_userBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{group_userBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{group_userBean.group_userList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{group_userBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{group_userBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{group_userBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{group_userBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{group_userBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{group_userBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="User detail"/>
+                                    </f:facet>
+                                    
+                                    <h:outputText value="#{item.user_detail.username}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Group_detail"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.group_detail.group_name}"/>
+                                </p:column>                              
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,425 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="metadata">
+                <f:metadata>
+                    <f:event listener="#{activityBean.init()}" type="preRenderView" />
+                </f:metadata>
+            </ui:define>
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(activityBean.formstate.equals('edit') or activityBean.formstate.equals('add')) and activityBean.activity!=null}">
+                            <p:panelGrid columns="4">
+                                <p:outputLabel value="Activity name:" for="activity_name" />
+                                <p:inputTextarea id="activity_name" value="#{activityBean.activity.activity_name}" title="Activity_name" required="true" requiredMessage="The Activity_name field is required."/>
+                                <p:outputLabel value="Is start:" for="is_start" />
+                                <p:selectOneMenu id="is_start" value="#{activityBean.activity.is_start}" required="true" requiredMessage="The Is_start field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Is final:" for="is_final" />
+                                <p:selectOneMenu id="is_final" value="#{activityBean.activity.is_final}" required="true" requiredMessage="The Is_final field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Duration(Days):" for="duration" />
+                                <p:inputText id="duration" value="#{activityBean.activity.duration}" title="Duration" required="true" requiredMessage="The Duration field is required."/>
+                                <p:outputLabel value="Flag after(Days):" for="flag_after" />
+                                <p:inputText id="flag_after" value="#{activityBean.activity.flag_after}" title="Flag_after" required="true" requiredMessage="The Flag_after field is required."/>
+                                <p:outputLabel value="To activity if success:" for="to_activity_if_success" />
+                                <p:selectOneMenu id="to_activity_if_success" value="#{activityBean.activity.to_activity_if_success}">
+                                    <f:selectItem itemLabel="" />
+                                    <c:forEach var="var" items="#{activityBean.activityList}" >
+                                        <f:selectItem itemLabel="#{var.activity_name}" itemValue="#{var.activity_id}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Is agent required:" for="is_agent_required" />
+                                <p:selectOneMenu id="is_agent_required" value="#{activityBean.activity.is_agent_required}" required="true" requiredMessage="The Is_agent_required field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="From activity:" for="from_activity" />
+                                <p:selectOneMenu id="from_activity" value="#{activityBean.activity.from_activity}" converter="activityConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{activityBean.activityList}"
+                                                   var="activityItem"
+                                                   itemValue="#{activityItem}"
+                                                   itemLabel="#{activityItem.activity_name}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Is approval required:" for="is_approval_required" />
+                                <p:selectOneMenu id="is_approval_required" value="#{activityBean.activity.is_approval_required}" required="true" requiredMessage="The Is_approval_required field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="To activity if failure:" for="to_activity_if_failure" />
+                                <p:selectOneMenu id="to_activity_if_failure" value="#{activityBean.activity.to_activity_if_failure}">
+                                    <f:selectItem itemLabel="" />
+                                    <c:forEach var="var" items="#{activityBean.activityList}" >
+                                        <f:selectItem itemLabel="#{var.activity_name}" itemValue="#{var.activity_id}" />
+                                    </c:forEach>
+<!--<f:selectItems value="#{activityBean.activityList}"
+                                                   var="activityItem"
+                                                   itemValue="#{activityItem.activity_id}"
+                                                   itemLabel="#{activityItem.activity_name}"
+                                                   />-->
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Is Create Staff Activity:" for="is_create_staff_activity" />
+                                <p:selectOneMenu id="is_create_staff_activity" value="#{activityBean.activity.is_create_staff_activity}" required="true" requiredMessage="The Is_create_staff_activity field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+
+                            <p:panel header="Activity Possible Outcomes" id="ao">
+                                <p:panelGrid columns="2" rendered="#{activityBean.activity_outcome!=null and (activityBean.activity_outcome_formstate.equals('add') or activityBean.activity_outcome_formstate.equals('edit'))}">
+                                    <p:outputLabel value="Possible Outcome:" for="activity_outcome_name" />
+                                    <p:inputText id="activity_outcome_name" value="#{activityBean.activity_outcome.activity_outcome_name}" title="Activity_outcome_name" required="true" requiredMessage="The Activity_outcome_name field is required."/>
+                                    <p:outputLabel value="Equivalent To:" for="outcome" />
+                                    <p:selectOneMenu id="outcome" value="#{activityBean.activity_outcome.outcome}" required="true" requiredMessage="The Outcome field is required." converter="outcomeConverter">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{outcomeBean.outcomeList}"
+                                                       var="outcomeItem"
+                                                       itemValue="#{outcomeItem}"
+                                                       itemLabel="#{outcomeItem.outcome_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+                                <p:commandButton value="Add Possible Outcome" action="#{activityBean.save_activity_outcome}" update="@([id$=ao])" process="@this,activity_outcome_name,outcome" icon="ui-icon-disk"  rendered="#{activityBean.activity_outcome!=null and (activityBean.activity_outcome_formstate.equals('add') or activityBean.activity_outcome_formstate.equals('edit'))}" />
+                                <p:commandButton value="Cancel Possible Outcome" action="#{activityBean.cancel_activity_outcome}" process="@this" update="@([id$=ao])" icon="ui-icon-cancel" rendered="#{activityBean.activity_outcome!=null and (activityBean.activity_outcome_formstate.equals('add') or activityBean.activity_outcome_formstate.equals('edit'))}"/>
+                                <br/>
+                                <p:commandButton value="Add Possible Outcome" action="#{activityBean.add_activity_outcome()}" process="@this" update="@([id$=ao])" icon="ui-icon-plus" rendered="#{activityBean.activity_outcome_formstate.equals('view')}"/>
+                                <br/>
+                                <p:dataTable value="#{activityBean.activity_outcomes}" var="item">
+                                    <p:column>
+                                        <p:commandLink value="Remove" action="#{activityBean.remove_activity_outcome(item)}" process="@this" update="@([id$=ao])" />|
+                                        <p:commandLink value="Edit" action="#{activityBean.edit_activity_outcome(item)}" process="@this" update="@([id$=ao])" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Possible Outcome"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.activity_outcome_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Equivalent To"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.outcome.outcome_name}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:panel>
+
+                            <p:panel header="Possible Activity Costs" id="ac">
+                                <p:panelGrid columns="2" rendered="#{activityBean.activity_cost!=null and (activityBean.activity_cost_formstate.equals('add') or activityBean.activity_cost_formstate.equals('edit'))}">
+                                    <p:outputLabel value="Cost name:" for="cost_name" />
+                                    <p:inputText id="cost_name" value="#{activityBean.activity_cost.cost_name}" title="Cost_name" required="true" requiredMessage="The Cost_name field is required."/>
+                                    <p:outputLabel value="Cost value:" for="cost_value" />
+                                    <p:inputText id="cost_value" value="#{activityBean.activity_cost.cost_value}" title="Cost_value" required="true" requiredMessage="The Cost_value field is required."/>
+                                    <p:outputLabel value="Is active:" for="is_active" />
+                                    <p:selectOneMenu id="is_active" value="#{activityBean.activity_cost.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                        <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                        <f:selectItem itemLabel="No" itemValue="No" />
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+                                <p:commandButton value="Add Possible Cost" action="#{activityBean.save_activity_cost}" update="@([id$=ac])" process="@this,cost_value,cost_name,is_active" icon="ui-icon-disk"  rendered="#{activityBean.activity_cost!=null and (activityBean.activity_cost_formstate.equals('add') or activityBean.activity_cost_formstate.equals('edit'))}" />
+                                <p:commandButton value="Cancel Possible Cost" action="#{activityBean.cancel_activity_cost}" process="@this" update="@([id$=ac])" icon="ui-icon-cancel" rendered="#{activityBean.activity_cost!=null and (activityBean.activity_cost_formstate.equals('add') or activityBean.activity_cost_formstate.equals('edit'))}"/>
+                                <br/>
+                                <p:commandButton value="Add Possible Cost" action="#{activityBean.add_activity_cost()}" process="@this" update="@([id$=ac])" icon="ui-icon-plus" rendered="#{activityBean.activity_cost_formstate.equals('view')}"/>
+                                <br/>
+                                <p:dataTable value="#{activityBean.activity_costs}" var="item">
+                                    <p:column>
+                                        <p:commandLink value="Remove" action="#{activityBean.remove_activity_cost(item)}" process="@this" update="@([id$=ac])" />|
+                                        <p:commandLink value="Edit" action="#{activityBean.edit_activity_cost(item)}" process="@this" update="@([id$=ac])" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Cost name"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.cost_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Cost value"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.cost_value}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <p:panel header="Activity Documents" id="ad">
+                                <p:panelGrid columns="2" rendered="#{activityBean.activity_document!=null and (activityBean.activity_document_formstate.equals('add') or activityBean.activity_document_formstate.equals('edit'))}">
+                                    <p:outputLabel value="Document_type:" for="document_type" />
+                                    <p:selectOneMenu id="document_type" value="#{activityBean.activity_document.document_type}" converter="document_typeConverter" required="true" requiredMessage="The Document_type field is required.">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{document_typeBean.document_typeList}"
+                                                       var="document_typeItem"
+                                                       itemValue="#{document_typeItem}"
+                                                       itemLabel="#{document_typeItem.doc_type_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Is mandatory:" for="is_mandatory" />
+                                    <p:selectOneMenu id="is_mandatory" value="#{activityBean.activity_document.is_mandatory}" required="true" requiredMessage="The Is_mandatory field is required.">
+                                        <f:selectItem itemLabel="No" itemValue="No" />
+                                        <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Direction:" for="direction" />
+                                    <p:selectOneMenu id="direction" value="#{activityBean.activity_document.direction}" required="true" requiredMessage="The Direction field is required.">
+                                        <f:selectItem itemLabel="IN" itemValue="IN" />
+                                        <f:selectItem itemLabel="OUT" itemValue="OUT" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Is active:" for="is_active_d" />
+                                    <p:selectOneMenu id="is_active_d" value="#{activityBean.activity_document.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                        <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                        <f:selectItem itemLabel="No" itemValue="No" />
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+                                <p:commandButton value="Add Activity Document" action="#{activityBean.save_activity_document}" update="@([id$=ad])" process="@this,document_type,is_mandatory,direction,is_active_d" icon="ui-icon-disk"  rendered="#{activityBean.activity_document!=null and (activityBean.activity_document_formstate.equals('add') or activityBean.activity_document_formstate.equals('edit'))}" />
+                                <p:commandButton value="Cancel Activity Document" action="#{activityBean.cancel_activity_document}" process="@this" update="@([id$=ad])" icon="ui-icon-cancel" rendered="#{activityBean.activity_document!=null and (activityBean.activity_document_formstate.equals('add') or activityBean.activity_document_formstate.equals('edit'))}"/>
+                                <br/>
+                                <p:commandButton value="Add Activity Document" action="#{activityBean.add_activity_document()}" process="@this" update="@([id$=ad])" icon="ui-icon-plus" rendered="#{activityBean.activity_document_formstate.equals('view')}"/>
+                                <br/>
+                                <p:dataTable value="#{activityBean.activity_documents}" var="item">
+                                    <p:column>
+                                        <p:commandLink value="Remove" action="#{activityBean.remove_activity_document(item)}" process="@this" update="@([id$=ad])" />|
+                                        <p:commandLink value="Edit" action="#{activityBean.edit_activity_document(item)}" process="@this" update="@([id$=ad])" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is mandatory"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_mandatory}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Direction"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.direction}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Document type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+
+
+                            <p:commandButton value="Save" actionListener="#{activityBean.save}" process="@form" update="@form" icon="ui-icon-disk"/>
+                            <p:commandButton value="Cancel" action="#{activityBean.cancel()}" process="@this" update="@form" icon="ui-icon-cancel"/>
+
+                        </p:panel>
+                        <p:panel rendered="#{(activityBean.formstate.equals('delete') or activityBean.formstate.equals('view')) and activityBean.activity!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{activityBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="4">
+                                <h:outputText value="Activity name:"/>
+                                <h:outputText value="#{activityBean.activity.activity_name}" title="Activity_name"/>
+                                <h:outputText value="Is start:"/>
+                                <h:outputText value="#{activityBean.activity.is_start}" title="Is_start"/>
+                                <h:outputText value="Is final:"/>
+                                <h:outputText value="#{activityBean.activity.is_final}" title="Is_final"/>
+                                <h:outputText value="Duration(Days):"/>
+                                <h:outputText value="#{activityBean.activity.duration}" title="Duration"/>
+                                <h:outputText value="Flag after(Days):"/>
+                                <h:outputText value="#{activityBean.activity.flag_after}" title="Flag_after"/>
+                                <h:outputText value="Is approval required:"/>
+                                <h:outputText value="#{activityBean.activity.is_approval_required}" title="Is_approval_required"/>
+                                <h:outputText value="Is agent required:"/>
+                                <h:outputText value="#{activityBean.activity.is_agent_required}" title="Is_agent_required"/>
+                                <h:outputText value="From activity:"/>
+                                <h:outputText value="#{activityBean.activity.from_activity.activity_name}" title="From_activity"/>
+                                <h:outputText value="Next if success:"/>
+                                <h:outputText value="#{activityBean.getActivityById(activityBean.activity.to_activity_if_success).activity_name}" title="To_activity_if_success"/>
+                                <h:outputText value="Next if failure:"/>
+                                <h:outputText value="#{activityBean.getActivityById(activityBean.activity.to_activity_if_failure).activity_name}" title="To_activity_if_failure"/>
+                                <h:outputText value="Is Create Staff Activity:"/>
+                                <h:outputText value="#{activityBean.activity.is_create_staff_activity}" title="is_create_staff_activity"/>
+                            </p:panelGrid>
+                            <p:panel header="Possible Activity Outcomes">
+                                <p:dataTable value="#{activityBean.activity_outcomes}" var="item">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Possible Outcome"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.activity_outcome_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Equivalent To"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.outcome.outcome_name}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:panel>
+                            <p:panel header="Possible Activity Costs">
+                                <p:dataTable value="#{activityBean.activity_costs}" var="item">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Cost name"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.cost_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Cost value"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.cost_value}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <p:panel header="Activity Documents">
+                                <p:dataTable value="#{activityBean.activity_documents}" var="item">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is mandatory"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_mandatory}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Direction"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.direction}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Document type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <p:commandButton value="Delete" rendered="#{activityBean.formstate.equals('delete')}" actionListener="#{activityBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{activityBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel">
+                                <f:setPropertyActionListener target="#{activity_outcomeBean.activity_outcome}" value="#{null}"/>
+                                <f:setPropertyActionListener target="#{activity_outcomeBean.formstate}" value="#{'view'}"/>
+                            </p:commandButton>
+                        </p:panel>
+
+                        <p:panel rendered="#{activityBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Activity" action="#{activityBean.add()}" update="@form" process="@this" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{activityBean.activityList}" var="item" paginator="true" 
+                                         rows="50" 
+                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
+                                         rowsPerPageTemplate="50,100" lazy="true" id="activitytable">
+                                <p:column>
+                                    <p:commandLink  action="#{activityBean.edit(item)}" value="Edit" process="@this" update="@form" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                    </p:commandLink> | 
+                                    <p:commandLink action="#{activityBean.delete(item)}" value="Delete" process="@this" update="@form" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                    </p:commandLink> | 
+                                    <p:commandLink action="#{activityBean.view(item)}" value="View" process="@this" update="@form" oncomplete="javascript:window.scroll(0,0);">
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity Name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity_name}"/>
+                                </p:column>
+                                <!--
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is Start"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_start}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is Final"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_final}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Duration(Days)"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.duration}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Flag After(Days)"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.flag_after}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Approval Required"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_approval_required}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Agent Required"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_agent_required}"/>
+                                </p:column>-->
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="From Activity"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.from_activity.activity_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Next if success"/>
+                                    </f:facet>
+                                    <h:outputText value="#{activityBean.getActivityById(item.to_activity_if_success).activity_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Next if failure"/>
+                                    </f:facet>
+                                    <h:outputText value="#{activityBean.getActivityById(item.to_activity_if_failure).activity_name}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

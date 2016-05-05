@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="search_form">
+                        <p:panelGrid id="header" columns="9">
+                            <p:outputLabel value="Username:" for="user" />
+                            <p:selectOneMenu id="user" value="#{userAction.username1}">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{user_detailBean.user_detailList}"
+                                               var="ud"
+                                               itemValue="#{ud.username}"
+                                               itemLabel="#{ud.username}"
+                                               />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Year:" for="year" />
+                            <p:inputText value="#{userAction.year1}" id="year"/>
+                            
+                            <p:outputLabel value="Month:" for="month" />
+                            <p:selectOneMenu id="month" value="#{userAction.month1}">
+                                <f:selectItem itemLabel="" itemValue="0"/>
+                                <f:selectItem itemLabel="1" itemValue="1"/>
+                                <f:selectItem itemLabel="2" itemValue="2"/>
+                                <f:selectItem itemLabel="3" itemValue="3"/>
+                                <f:selectItem itemLabel="4" itemValue="4"/>
+                                <f:selectItem itemLabel="5" itemValue="5"/>
+                                <f:selectItem itemLabel="6" itemValue="6"/>
+                                <f:selectItem itemLabel="7" itemValue="7"/>
+                                <f:selectItem itemLabel="8" itemValue="8"/>
+                                <f:selectItem itemLabel="9" itemValue="9"/>
+                                <f:selectItem itemLabel="10" itemValue="10"/>
+                                <f:selectItem itemLabel="11" itemValue="11"/>
+                                <f:selectItem itemLabel="12" itemValue="12"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Day:" for="day" />
+                            <p:inputText value="#{userAction.day1}" id="day"/>
+                            <p:commandButton value="Search" update="detail" icon="ui-icon-search" id="searchbutton"/>
+                        </p:panelGrid>
+
+                        <p:panel id="detail" header="">
+                            <p:scrollPanel>
+                                <p:dataTable id="table_actions" value="#{userActionBean.getUserActions(userAction.username1, userAction.year1,userAction.month1,userAction.day1)}" var="item" paginator="true" rows="100" tableStyle="width:auto;" paginatorTemplate="Page {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}">
+                                    <f:facet name="{Exporters}">
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/excel.png" width="24"/>
+                                            <p:dataExporter type="xls" target="table_actions" fileName="user_actions" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/pdf.png" width="24"/>
+                                            <p:dataExporter type="pdf" target="table_actions" fileName="user_actions"/>
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/csv.png" width="24"/>
+                                            <p:dataExporter type="csv" target="table_actions" fileName="user_actions" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/xml.png" width="24"/>
+                                            <p:dataExporter type="xml" target="table_actions" fileName="user_actions" />
+                                        </h:commandLink>
+                                    </f:facet>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Username"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.username1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Category"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.category1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Object"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.object1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Action"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.action1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Year"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.year1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Month"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.month1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Day"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.day1}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Records"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.records1}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:scrollPanel>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

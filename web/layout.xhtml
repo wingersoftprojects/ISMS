@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="shortcut icon" href="images/favicon.ico"/>
+        <link href="resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <!--<h:outputStylesheet name="./css/bootstrap.css"/>-->
+        <h:outputStylesheet name="./css/custom.css"/>
+        <title>Immigration Staffing Management System</title>
+        <script type="text/javascript">
+            function ScrollPage(location) {
+                window.location.hash = location;
+            }
+        </script>        
+    </h:head>
+
+    <h:body>        
+        <div class="container" id="outer">
+            <div class="ui-grid ui-grid-responsive">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div id="top">
+                            <ui:insert name="top">
+                                <div class="ui-grid ui-grid-responsive">
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-3">
+                                            <img src="images/logo.png" alt=""/>
+                                        </div>
+                                        <div class="ui-grid-col-9" style="margin-top: 2%">
+                                            <h:form id="menuform">
+
+  <!--<h:outputText id="txt_count" value="#{taskBean.overDueTasks.size()}" />
+  <p:poll interval="3" update="txt_count" listener="#{taskBean.popup}" />-->
+
+                                                <p:menubar>      
+                                                    <p:submenu label="Folder" rendered="#{loginBean.IsAllowed('FOLDER', 'View')}"> 
+                                                        <p:menuitem value="Staff Folder" action="#{navigationBean.staff()}" rendered="#{1==1}"/>  
+                                                        <p:menuitem value="DOC IN/OUT Status" action="#{navigationBean.doc_in_out()}" rendered="#{1==1}"/>
+                                                    </p:submenu>
+                                                    <p:submenu label="Leave" rendered="#{loginBean.IsAllowed('LEAVE', 'View')}"> 
+                                                        <p:menuitem value="Leave Transaction" action="#{navigationBean.leave_transaction()}" rendered="#{1==1}"/>  
+                                                    </p:submenu>
+
+                                                    <p:submenu label="Task" rendered="#{loginBean.IsAllowed('TASK', 'View')}"> 
+                                                        <p:menuitem value="All Tasks" action="#{navigationBean.task()}" rendered="#{1==1}"/>  
+                                                        <p:menuitem value="Create Task" action="#{navigationBean.createtask()}" rendered="#{loginBean.IsAllowed('TASK', 'Add')}"/> 
+                                                    </p:submenu>
+
+                                                    <p:submenu label="Settings" rendered="#{loginBean.IsAllowed('SETTING', 'View')}"> 
+                                                        <p:submenu label="Activity" rendered="#{1==1}"> 
+                                                            <p:menuitem value="Activity" action="#{navigationBean.activity()}" rendered="#{1==1}"/>  
+                                                            <!--<p:menuitem value="Activity Cost" action="#{navigationBean.activity_cost()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="Activity Document" action="#{navigationBean.activity_document()}" rendered="#{1==1}"/> -->
+                                                            <p:menuitem value="Activity Group" action="#{navigationBean.activity_group()}" rendered="#{1==1}"/>
+                                                            <!--<p:menuitem value="Activity Outcome" action="#{navigationBean.activity_outcome()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="Outcome" action="#{navigationBean.outcome()}" rendered="#{1==1}"/>-->
+                                                            <p:menuitem value="Duration Type" action="#{navigationBean.duration_type()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                        <p:menuitem value="Document Type" action="#{navigationBean.document_type()}" rendered="#{1==1}"/> 
+                                                        <p:submenu label="Users and Rights" rendered="#{1==1}"> 
+                                                            <p:menuitem value="Group Details" action="#{navigationBean.group_detail()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="Group Rights" action="#{navigationBean.group_right()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="User Details" action="#{navigationBean.user_detail()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Group User" action="#{navigationBean.group_user()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                        <p:submenu label="Task" rendered="#{1==1}"> 
+                                                            <p:menuitem value="Approval Type" action="#{navigationBean.approval_type()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                        <p:submenu label="Agent" rendered="#{1==1}"> 
+                                                            <p:menuitem value="Agency" action="#{navigationBean.agency()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="Agent Details" action="#{navigationBean.agent()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                        <p:submenu label="Other Settings" rendered="#{1==1}"> 
+                                                            <p:menuitem value="Staff Type" action="#{navigationBean.staff_type()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="Staff Post" action="#{navigationBean.staff_post()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="Currency Type" action="#{navigationBean.currency_type()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Leave Type" action="#{navigationBean.leave_type()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Air Ticket Type" action="#{navigationBean.air_ticket_type()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Group of Companies" action="#{navigationBean.company()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Nationality" action="#{navigationBean.nationality()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Accommodation Type" action="#{navigationBean.accommodation_type()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Exit Mode" action="#{navigationBean.exit_mode()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                    </p:submenu>
+
+                                                    <p:submenu label="Reports" rendered="#{1==1}"> 
+                                                        <p:submenu label="Task Reports" rendered="#{loginBean.IsAllowed('TASK', 'View')}"> 
+                                                            <p:menuitem value="All OverDue Tasks" action="#{navigationBean.report_task_overdue_all()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="All Flagged Tasks" action="#{navigationBean.report_task_flagged_all()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="All Pending Tasks" action="#{navigationBean.report_task_pending_all()}" rendered="#{1==1}"/> 
+                                                        </p:submenu> 
+                                                        <p:submenu label="Staff Reports" rendered="#{loginBean.IsAllowed('FOLDER', 'View')}"> 
+                                                            <p:menuitem value="All Active Staff" action="#{navigationBean.report_staff_act_all()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Active Staff Dynamic Report" action="#{navigationBean.report_staff_act_dynamic()}" rendered="#{1==1}"/>  
+                                                        </p:submenu>
+                                                        <p:submenu label="Leave Reports" rendered="#{loginBean.IsAllowed('LEAVE', 'View')}"> 
+                                                            <p:menuitem value="All Leave Taken" action="#{navigationBean.report_leave_all()}" rendered="#{1==1}"/>  
+                                                        </p:submenu>
+                                                        <p:submenu label="DOC Reports" rendered="#{loginBean.IsAllowed('TASK', 'View')}"> 
+                                                            <p:menuitem value="Filter By Month DOCs" action="#{navigationBean.report_doc_future_expiry_all()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="Expired DOCs" action="#{navigationBean.report_doc_expired_all()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="Flagged DOCs" action="#{navigationBean.report_doc_flagged_all()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="All DOCs IN" action="#{navigationBean.report_doc_in_all()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="All DOCs OUT" action="#{navigationBean.report_doc_out_all()}" rendered="#{1==1}"/> 
+                                                            <p:menuitem value="Staff with DOCs" action="#{navigationBean.report_staff_with_docs()}" rendered="#{1==1}"/>
+                                                            <p:menuitem value="Staff without DOCs" action="#{navigationBean.report_staff_without_docs()}" rendered="#{1==1}"/>
+                                                        </p:submenu>
+                                                        <p:submenu label="Agent Reports" rendered="#{loginBean.IsAllowed('TASK', 'View')}"> 
+                                                            <p:menuitem value="All Active Agents" action="#{navigationBean.report_agent_act_all()}" rendered="#{1==1}"/>  
+                                                            <p:menuitem value="All Active Agents by Type" action="#{navigationBean.report_agent_act_type()}" rendered="#{1==1}"/> 
+                                                        </p:submenu>
+                                                        <p:submenu label="Activity Reports" rendered="#{loginBean.IsAllowed('TASK', 'View')}"> 
+                                                            <p:menuitem value="User Activity Reports" action="#{navigationBean.report_activity_dynamic()}" rendered="#{1==1}"/>  
+                                                        </p:submenu>
+                                                    </p:submenu>
+                                                    <p:submenu label="Welcome #{loginBean.user_detail.staff.pp_surname.concat(' ').concat(loginBean.user_detail.staff.pp_given_names)}!" style="float: right; background: darkorange;" rendered="#{loginBean.user_detail.staff!=null}">  
+                                                        <p:menuitem value="Logout (#{loginBean.user_detail.username})" action="#{loginBean.logout()}" update="@all" ajax="false" />
+                                                        <p:separator />
+                                                    </p:submenu>
+                                                    <p:submenu label="Welcome #{loginBean.user_detail.username}!" style="float: right; background: darkorange;" rendered="#{loginBean.user_detail.staff==null}">  
+                                                        <p:menuitem value="Logout (#{loginBean.user_detail.username})" action="#{loginBean.logout()}" update="@all" ajax="false" />
+                                                        <p:separator />
+                                                    </p:submenu>
+                                                </p:menubar>
+                                            </h:form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:insert>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ui-grid ui-grid-responsive">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3" style="width: 20% !important;">
+                        <div id="left">
+                            <div style="background: #e8f6ff;border-color: #b9ddf3;margin: 2px;padding: 2px !important; ">
+                                <ui:insert name="left">
+                                    <h:form id="notificationform" rendered="#{loginBean.IsAllowed('TASK', 'View')}">
+                                        <p:panel header="Tasks">
+                                            <p:commandLink value="OVERDUE TASKS (#{taskBean.overDueTasks.size()})" update="@form" style="background: red !important; color:black !important; padding: 5px;width: 100%; display: block; text-align: center;" ajax="false" action="#{navigationBean.report_task_overdue_all()}"/>
+                                            <hr/>
+                                            <p:commandLink value="FLAGGED TASKS (#{taskBean.flaggedTasks.size()})" update="@form" style="background: yellow !important; color:black !important; padding: 5px;width: 100%; display: block; text-align: center;" ajax="false" action="#{navigationBean.report_task_flagged_all()}"/>
+                                            <hr/>
+                                            <p:commandLink value="PENDING TASKS (#{taskBean.pendingTasks.size()})" update="@form" style="background: greenyellow !important; color:black !important; padding: 5px;width: 100%; display: block; text-align: center;" ajax="false" action="#{navigationBean.report_task_pending_all()}"/>
+                                            <!--<p:accordionPanel multiple="true" activeIndex="-1">
+                                                <p:tab title="OVERDUE TASKS (#{taskBean.overDueTasks.size()})" titleStyle="background: red !important; color:black !important">
+                                                    <p:panel  class="overduetasks notifications">
+                                                        <c:forEach var="var" items="#{taskBean.overDueTasks}" >
+                                                            <p:commandLink value="#{var.activity.activity_name}" update="@form" style="color: red" ajax="false" action="#{navigationBean.task()}">
+                                                                <f:setPropertyActionListener target="#{taskBean.task}" value="#{var}" />
+                                                                <f:actionListener binding="#{taskBean.populatedocumentlist()}"/>
+                                                            </p:commandLink>
+                                                            <f:verbatim><br/></f:verbatim>
+                                                            <p:outputLabel value=" (#{var.staff.pp_surname.concat(' ').concat(var.staff.pp_given_names)})"/>
+                                                            <f:verbatim><hr/></f:verbatim>
+                                                                                                                    </c:forEach>
+                                                    </p:panel>
+                                                </p:tab>
+                                                <p:tab title="FLAGGED TASKS (#{taskBean.flaggedTasks.size()})" titleStyle="background: yellow !important; color:black !important">
+                                                    <p:panel  class="flaggedtasks notifications">
+                                                        <c:forEach var="var" items="#{taskBean.flaggedTasks}" >
+                                                            <p:commandLink value="#{var.activity.activity_name}" update="@form" style="color: black" ajax="false" action="#{navigationBean.task()}">
+                                                                <f:setPropertyActionListener target="#{taskBean.task}" value="#{var}" />
+                                                                <f:actionListener binding="#{taskBean.populatedocumentlist()}"/>
+                                                            </p:commandLink>
+                                                            <f:verbatim><br/></f:verbatim>
+                                                            <p:outputLabel value=" (#{var.staff.pp_surname.concat(' ').concat(var.staff.pp_given_names)})"/>
+                                                            <f:verbatim><hr/></f:verbatim>
+                                                                                                                    </c:forEach>
+                                                    </p:panel>
+                                                </p:tab>
+                                                <p:tab title="PENDING TASKS (#{taskBean.pendingTasks.size()})" titleStyle="background: greenyellow; color:black !important">
+                                                    <p:panel  class="pendingtasks notifications">
+                                                        <c:forEach var="var" items="#{taskBean.pendingTasks}" >
+                                                            <p:commandLink value="#{var.activity.activity_name}" update="@form" style="color: black;" ajax="false" action="#{navigationBean.task()}">
+                                                                <f:setPropertyActionListener target="#{taskBean.task}" value="#{var}" />
+                                                                <f:actionListener binding="#{taskBean.populatedocumentlist()}"/>
+                                                            </p:commandLink>
+                                                            <f:verbatim><br/></f:verbatim>
+                                                            <p:outputLabel value=" (#{var.staff.pp_surname.concat(' ').concat(var.staff.pp_given_names)})"/>
+                                                            <f:verbatim><hr/></f:verbatim>
+                                                                                                                    </c:forEach>
+                                                    </p:panel>
+                                                </p:tab>
+                                            </p:accordionPanel>-->
+                                            <!--<p:commandButton action="#{listBean.refreshalllists}" value="Refresh"/>-->
+                                        </p:panel>
+                                        <p:panel header="Documents">
+                                            <p:commandLink value="EXPIRED DOCUMENTS (#{taskBean.expiredDocuments.size()})" update="@form" style="background: red !important; color:black !important; padding: 5px 0 5px;width: 100%; display: block; text-align: center;" ajax="false" action="#{navigationBean.report_doc_expired_all()}"/>
+                                            <hr/>
+                                            <p:commandLink value="FLAGGED DOCUMENTS (#{taskBean.flaggedDocuments.size()})" update="@form" style="background: yellow !important; color:black !important; padding: 5px 0 5px;width: 100%; display: block; text-align: center;" ajax="false" action="#{navigationBean.report_doc_flagged_all()}"/>
+                                            <!--<p:accordionPanel multiple="true" activeIndex="-1">
+                                                <p:tab title="EXPIRED DOCUMENTS (#{taskBean.expiredDocuments.size()})" titleStyle="background: red !important; color:black !important">
+                                                    <p:panel  class="overduetasks notifications">
+                                                        <c:forEach var="var" items="#{taskBean.expiredDocuments}" >
+                                                            <p:commandLink value="#{var.staff.pp_surname.concat(' ').concat(var.staff.pp_given_names)}" update="@form" style="color: red" ajax="false" action="#{staffBean.viewexpireddocument(var.staff)}">
+                                                            </p:commandLink>
+                                                            <f:verbatim><br/></f:verbatim>
+                                                            <p:outputLabel value=" (#{var.document_type.doc_type_name})"/>
+                                                            <f:verbatim><hr/></f:verbatim>
+                                                        </c:forEach>
+                                                    </p:panel>
+                                                </p:tab>
+                                                
+                                                <p:tab title="FLAGGED DOCUMENTS (#{taskBean.flaggedDocuments.size()})" titleStyle="background: yellow !important; color:black !important">
+                                                    <p:panel  class="flaggedtasks notifications">
+                                                        <c:forEach var="var" items="#{taskBean.flaggedDocuments}">
+                                                            <p:commandLink value="#{var.staff.pp_surname.concat(' ').concat(var.staff.pp_given_names)}" update="@form" style="color: black;" ajax="false" action="#{staffBean.viewexpireddocument(var.staff)}"/>
+                                                            <f:verbatim><br/></f:verbatim>
+                                                            <p:outputLabel value=" (#{var.document_type.doc_type_name})"/>
+                                                            <f:verbatim><hr/></f:verbatim>
+                                                        </c:forEach>
+                                                    </p:panel>
+                                                </p:tab>
+                                            </p:accordionPanel>
+                                            -->
+                                            <!--<p:commandButton action="#{listBean.refreshalllists}" value="Refresh"/>-->
+                                        </p:panel>
+                                    </h:form>
+                                </ui:insert>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-9" style="width: 80% !important;">
+                        <div id="content" class="right_content">
+                            <div style="background: #e8f6ff;border-color: #b9ddf3;padding: 2px !important;margin: 2px; ">
+                                <ui:insert name="content">
+                                    Content
+                                </ui:insert>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h:form rendered="#{taskBean.overDueTasks.size()>0 or taskBean.expiredDocuments.size()>0}">
+            <p:poll interval="10" oncomplete="show()" />
+        </h:form>
+        <script>
+            var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+
+            Notification.requestPermission(function (permission) {
+                // console.log(permission);
+            });
+
+            function show() {
+                var instance = new Notification('Task Notification', {
+                    body: 'You have overdue #{taskBean.overDueTasks.size()} task(s) to attend to, and #{taskBean.expiredDocuments.size()} Expired documents', tag: 'Preset', icon: 'images/logo.png'
+                });
+                instance.onclick = function () {
+                    // Something to do
+                    window.location = '../faces/welcome.xhtml';
+                };
+                instance.onerror = function () {
+                    // Something to do
+                };
+                instance.onshow = function () {
+                    // Something to do
+                };
+                instance.onclose = function () {
+                    // Something to do
+                }
+                ;
+            }
+        </script>
+    </h:body>
+
+</html>
+

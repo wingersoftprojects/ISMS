@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <p:panelGrid id="header" columns="3">
+                            <p:outputLabel value="Summarize Leave by:" for="summary" />
+                            <p:selectOneMenu id="summary" value="#{leave_transactionBean.summaryBy}">
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItem itemLabel="Leave Type" itemValue="Leave Type"/>
+                                <f:selectItem itemLabel="Leave Year" itemValue="Leave Year"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Show Graph" update="detail" icon="ui-icon-search" id="searchbutton"/>
+                        </p:panelGrid>
+
+                        <p:panel id="detail" header="Active Leave Taken">
+                            <p:chart rendered="#{leave_transactionBean.summaryBy.length()>0}" id="chart_leave_transaction" type="bar" model="#{leave_transactionBean.leaveTransactionModel}" style="height:300px;"/>
+
+                            <p:dataTable id="table_leave_transaction" value="#{leave_transactionBean.leave_transactionList}" var="item" paginator="true" rows="25" tableStyle="width:auto;" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters} {Total}">
+                                <f:facet name="{Total}">
+                                    Total records returned: #{leave_transactionBean.leave_transactionList.size()}
+                                </f:facet>
+                                <f:facet name="{Exporters}">
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/excel.png" width="24"/>
+                                        <p:dataExporter type="xls" target="table_leave_transaction" fileName="leave_transaction" />
+                                    </h:commandLink>
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/pdf.png" width="24"/>
+                                        <p:dataExporter type="pdf" target="table_leave_transaction" fileName="leave_transaction"/>
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/csv.png" width="24"/>
+                                        <p:dataExporter type="csv" target="table_leave_transaction" fileName="leave_transaction" />
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/xml.png" width="24"/>
+                                        <p:dataExporter type="xml" target="table_leave_transaction" fileName="leave_transaction" />
+                                    </h:commandLink>
+                                </f:facet>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Staff"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff.pp_surname} #{item.staff.pp_given_names}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Leave type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_type.leave_type_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Year"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_year}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Quarter"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_quarter}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Days taken"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.days_taken}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Start date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.start_date}">
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="End date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.end_date}">
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Ticket by"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.ticket_issue_by}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Paid leave"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.paid_leave}"/>
+                                </p:column>
+                            </p:dataTable>
+
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

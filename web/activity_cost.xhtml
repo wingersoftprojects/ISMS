@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <p:panel header="Add/Edit" rendered="#{(activity_costBean.formstate.equals('edit') or activity_costBean.formstate.equals('add')) and activity_costBean.activity_cost!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity:" for="activity" />
+                                <p:selectOneMenu id="activity" value="#{activity_costBean.activity_cost.activity}" converter="activityConverter" required="true" requiredMessage="The Activity field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{activityBean.activityList}"
+                                                   var="activityItem"
+                                                   itemValue="#{activityItem}"
+                                                   itemLabel="#{activityItem.activity_name}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Cost name:" for="cost_name" />
+                                <p:inputText id="cost_name" value="#{activity_costBean.activity_cost.cost_name}" title="Cost_name" required="true" requiredMessage="The Cost_name field is required."/>
+                                <p:outputLabel value="Cost value:" for="cost_value" />
+                                <p:inputText id="cost_value" value="#{activity_costBean.activity_cost.cost_value}" title="Cost_value" required="true" requiredMessage="The Cost_value field is required."/>
+                                <p:outputLabel value="Is active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{activity_costBean.activity_cost.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{activity_costBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{activity_costBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="Delete/View" rendered="#{(activity_costBean.formstate.equals('delete') or activity_costBean.formstate.equals('view')) and activity_costBean.activity_cost!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{activity_costBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity:"/>
+                                <p:outputLabel value="#{activity_costBean.activity_cost.activity}"/>
+                                <p:outputLabel value="Cost name:"/>
+                                <p:outputLabel value="#{activity_costBean.activity_cost.cost_name}"/>
+                                <p:outputLabel value="Cost value:"/>
+                                <p:outputLabel value="#{activity_costBean.activity_cost.cost_value}"/>
+                                <p:outputLabel value="Is active:"/>
+                                <p:outputLabel value="#{activity_costBean.activity_cost.is_active}"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{activity_costBean.formstate.equals('delete')}" actionListener="#{activity_costBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{activity_costBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="List" rendered="#{activity_costBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Activity cost" action="#{activity_costBean.add()}" update="@form" process="@all" icon="ui-icon-plus"/>
+                                <!--<p:outputLabel value="#{activity_costBean.formstate}"/>-->
+                            </center>
+                            <br/>
+                            <p:dataTable value="#{activity_costBean.activity_costList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{activity_costBean.edit(item)}" value="Edit" immediate="true">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_costBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_costBean.delete(item)}" value="Delete" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_costBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_costBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_costBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Cost_name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.cost_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Cost_value"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.cost_value}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is_active"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_active}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

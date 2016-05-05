@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:outputText id="txt_count" value="#{counterView.number}" />
+            <p:poll interval="3" oncomplete="show()" />
+        </h:form>
+        <script>
+            var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+
+            Notification.requestPermission(function (permission) {
+                // console.log(permission);
+            });
+
+            function playSound() {
+                //var soundFx = $('#soundFx'); // Get our sound FX.
+                var audio = new Audio('images/sound1.wav');
+                audio.play();
+                //soundFx.play(); // Plays sound.
+
+            }
+
+            function show() {
+                var instance = new Notification('Emails received', {
+                    body: 'You have a total of 3 unread emails', tag: 'Preset', icon: 'images/logo.png'
+                });
+                var audio = new Audio('images/notify.wav');
+                audio.play();
+
+                instance.onclick = function () {
+                    // Something to do
+                    window.location = 'http://localhost:8080/ISMS/';
+                };
+                instance.onerror = function () {
+                    // Something to do
+                };
+                instance.onshow = function () {
+                    // Something to do
+                };
+                instance.onclose = function () {
+                    // Something to do
+                }
+                ;
+            }
+        </script>
+        <audio id="soundFX">
+            <source src="/images/sound1.wav"></source>
+            Update your browser to enjoy HTML5 audio!
+        </audio>
+        <button type="button" onclick="show()">Notify me!</button>
+        <button type="button" onclick="playSound()">Play Sound!</button>
+    </h:body>
+
+</html>
+

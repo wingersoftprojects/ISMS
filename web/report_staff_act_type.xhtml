@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="reportform">
+
+                        <p:panelGrid id="header" columns="3">
+                            <p:outputLabel value="Staff type:" for="staff_type" />
+                            <p:selectOneMenu id="staff_type" value="#{staffBean.staff_type}" converter="staff_typeConverter" required="true" requiredMessage="The staff_type field is required.">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{staff_typeBean.staff_typeList}"
+                                               var="staff_typeItem"
+                                               itemValue="#{staff_typeItem}"
+                                               itemLabel="#{staff_typeItem.staff_type_name}"
+                                               />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Search" update="detail" icon="ui-icon-search" id="searchbutton"/>
+                        </p:panelGrid>
+                        <p:panel id="detail" header="Active Staff by Type">
+                            <p:chart rendered="#{staffBean.activeStaffByType.size()>0}" id="chart_activeStaffByType" type="bar" model="#{staffBean.activeStaffByTypeModel}" style="height:300px;"/>
+
+                            <p:dataTable rendered="#{staffBean.activeStaffByType.size()>0}" id="table_activeStaffByType" value="#{staffBean.activeStaffByType}" var="item" paginator="true" rows="50" tableStyle="width:auto;" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters} {Total}">
+                                <f:facet name="{Total}">
+                                    Total records returned: #{staffBean.activeStaffByType.size()}
+                                </f:facet>
+                                <f:facet name="{Exporters}">
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/excel.png" width="24"/>
+                                        <p:dataExporter type="xls" target="table_activeStaffByType" fileName="activeStaffByType" />
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/pdf.png" width="24"/>
+                                        <p:dataExporter type="pdf" target="table_activeStaffByType" fileName="activeStaffByType"/>
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/csv.png" width="24"/>
+                                        <p:dataExporter type="csv" target="table_activeStaffByType" fileName="activeStaffByType" />
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="images/xml.png" width="24"/>
+                                        <p:dataExporter type="xml" target="table_activeStaffByType" fileName="activeStaffByType" />
+                                    </h:commandLink>
+                                </f:facet>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Surname"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_surname}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Given names"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_given_names}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Sex"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_sex}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Nationality"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_nationality}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Staff type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff_type.staff_type_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Date of birth"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_date_of_birth}">
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Profession"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.pp_profession}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Post"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff_post.staff_post_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Join date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.join_date}">
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Company"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.company.company_name}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

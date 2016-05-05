@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Upload Document</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <!--<h1><h:outputText value="Create"/></h1>-->
+            <p:panelGrid columns="2">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Document type:" for="document_type" rendered="#{task_documentBean.task_document.document_type==null}" />
+                    <p:selectOneMenu id="document_type" value="#{task_documentBean.task_document.document_type}" converter="document_typeConverter" rendered="#{task_documentBean.task_document.document_type==null}"> <!--required="true" requiredMessage="The Document_type field is required.">-->
+                        <f:selectItem itemLabel="" />
+                        <f:selectItems value="#{document_typeBean.document_typeListActive}"
+                                       var="document_typeItem"
+                                       itemValue="#{document_typeItem}"
+                                       itemLabel="#{document_typeItem.doc_type_name}"
+                                       />
+                        <f:ajax event="change" render="document_ref_no expiry_date" listener="#{task_documentBean.prepopulatepassportinfo()}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Document type:" for="document_type2" rendered="#{task_documentBean.task_document.document_type!=null and document_typeBean.dt!=null}" />
+                    <p:selectOneMenu id="document_type2" value="#{task_documentBean.task_document.document_type}" converter="document_typeConverter" rendered="#{task_documentBean.task_document.document_type!=null and document_typeBean.dt!=null}"> <!--required="true" requiredMessage="The Document_type field is required.">-->
+                        <f:selectItems value="#{document_typeBean.documenttypelist()}"
+                                       var="document_typeItem"
+                                       itemValue="#{document_typeItem}"
+                                       itemLabel="#{document_typeItem.doc_type_name}"
+                                       />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Document ref no:" for="document_ref_no" />
+                    <p:inputText id="document_ref_no" value="#{task_documentBean.task_document.document_ref_no}" title="Document_ref_no" />
+                    <p:outputLabel value="Expiry date:" for="expiry_date" />
+                    <p:calendar id="expiry_date" value="#{task_documentBean.task_document.expiry_date}" pattern="dd/MMMM/yyyy" navigator="true" title="Expiry_date" mindate="#{generalUtilities.currentDate}" >
+
+                    </p:calendar>
+                    <p:outputLabel value="Direction:" for="direction" />
+                    <p:selectOneMenu id="direction" value="#{task_documentBean.task_document.direction}" required="true" requiredMessage="The Direction field is required.">
+                        <f:selectItem itemLabel=""/>
+                        <f:selectItem itemLabel="IN" itemValue="IN" />
+                        <f:selectItem itemLabel="OUT" itemValue="OUT" />
+                        <f:selectItem itemLabel="N/A" itemValue="N/A" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="File Upload"/>
+                    <p:fileUpload id="identityattachement" fileUploadListener="#{task_documentBean.handleFileUpload}" mode="advanced"
+                                  auto="true" multiple="false" update="img_doc" allowTypes="/(\.|\/)(pdf|docx|doc|jpg|png|gif)$/" />
+                    <!--allowTypes="/(\.|\/)(jpg|png|jpeg|gif|pdf)$/"  -->
+                </p:panelGrid>
+                <p:panel id="img_doc">
+                <!--<h:graphicImage id="img_doc" value="docs/#{task_documentBean.task_document.document_url}" width="100px" height="100px" />-->
+                    <h:graphicImage id="img_doc_image" value="image/#{task_documentBean.task_document.document_url}" width="100px" height="100px" rendered="#{generalUtilities.checkdoctype(task_documentBean.task_document.document_url).equals('image')}" />
+                    <h:graphicImage id="img_doc_pdf" value="resources/images/pdf.png" width="100px" height="100px" rendered="#{generalUtilities.checkdoctype(task_documentBean.task_document.document_url).equals('pdf')}" />
+                    <h:graphicImage id="img_doc_word" value="resources/images/word.png" width="100px" height="100px" rendered="#{generalUtilities.checkdoctype(task_documentBean.task_document.document_url).equals('word')}" />
+                    <h:graphicImage id="img_doc_excel" value="resources/images/excel.png" width="100px" height="100px" rendered="#{generalUtilities.checkdoctype(task_documentBean.task_document.document_url).equals('excel')}" />
+                </p:panel> 
+            </p:panelGrid>
+            <p:commandButton value="Save" actionListener="#{task_documentBean.closeDialog(task_documentBean.task_document)}"  process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+        </h:form>
+    </h:body>
+</html>
+

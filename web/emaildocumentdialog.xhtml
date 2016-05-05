@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Enroll FingerPrint</title>
+    </h:head>
+    <h:body>
+        <p:dialog id="EmailDlg" widgetVar="EmailDlg" modal="true" resizable="false" appendTo="@(content)" header="Email Dialog" dynamic="true" showEffect="fade" hideEffect="explode">
+            <h:form id="sendemailform">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Email To" for="emailto"/>
+                    <p:inputTextarea value="#{taskBean.emailto}" id="emailto" required="true" requiredMessage="Email To Field is required"/>
+                    <p:outputLabel value="Copy To" for="emailcopyto"/>
+                    <p:inputTextarea value="#{taskBean.emailcopyto}" id="emailcopyto" required="true" requiredMessage="Email Copy To Field is required"/>
+                    <p:outputLabel value="Subject" for="emailsubject"/>
+                    <p:inputTextarea value="#{taskBean.emailsubject}" id="emailsubject" required="true" requiredMessage="Email Subject Field is required"/>
+                    <p:outputLabel value="Email Body" for="emailmessage"/>
+                    <p:inputTextarea value="#{taskBean.emailmessage}" id="emailmessage" required="true" requiredMessage="Email Message Field is required"/>
+                </p:panelGrid>
+                <br/>
+                Attachments
+                <ol>
+                    <c:forEach items="#{taskBean.emailtask_documentList}" var="item">
+                        <li><h1><h:outputText value="#{item.document_type.doc_type_name}"/></h1></li>
+                    </c:forEach>
+                </ol>
+                <br/>
+                <p:commandButton value="Send Email" actionListener="#{taskBean.sendEmail}" icon="ui-icon-check"  update="@form,:staffform" >
+                </p:commandButton>
+
+                <p:commandButton value="Cancel" process="@this" update="@form" actionListener="#{taskBean.closeEmailDialog()}" icon="ui-icon-cancel"/>
+            </h:form>
+            <!--<p:ajaxStatus style="width:16px;height:16px;" styleClass="spinner">  
+                <f:facet name="start">  
+                    <h:graphicImage library="images" name="ajax-loader.gif"/>  
+                </f:facet>  
+
+                <f:facet name="complete">  
+                    <h:outputText value="" />  
+                </f:facet>  
+            </p:ajaxStatus>-->
+        </p:dialog>
+    </h:body>
+</html>
+

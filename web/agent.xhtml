@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:messages closable="true"/>
+                        <p:panel header="Add/Edit" rendered="#{(agentBean.formstate.equals('edit') or agentBean.formstate.equals('add')) and agentBean.agent!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Agent_surname:" for="agent_surname" />
+                                <p:inputText id="agent_surname" value="#{agentBean.agent.agent_surname}" title="Agent_surname" required="true" requiredMessage="The Agent_surname field is required."/>
+                                <p:outputLabel value="Agent_other_names:" for="agent_other_names" />
+                                <p:inputText id="agent_other_names" value="#{agentBean.agent.agent_other_names}" title="Agent_other_names" required="true" requiredMessage="The Agent_other_names field is required."/>
+                                <p:outputLabel value="Is_active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{agentBean.agent.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Agent_type:" for="agent_type" />
+                                <p:selectOneMenu id="agent_type" value="#{agentBean.agent.agent_type}" converter="agent_typeConverter" required="true" requiredMessage="The Agent_type field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{agent_typeBean.agent_typeList}"
+                                                   var="agent_typeItem"
+                                                   itemValue="#{agent_typeItem}"
+                                                   itemLabel="#{agent_typeItem.agent_type_name}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Agency:" for="agency" />
+                                <p:selectOneMenu id="agency" value="#{agentBean.agent.agency}" converter="agencyConverter" required="true" requiredMessage="The Agency field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{agencyBean.agencyList}"
+                                                   var="agencyItem"
+                                                   itemValue="#{agencyItem}"
+                                                   itemLabel="#{agencyItem.agency_name}"
+                                                   />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{agentBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{agentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(agentBean.formstate.equals('delete') or agentBean.formstate.equals('view')) and agentBean.agent!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{agentBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Agent_surname:"/>
+                                <h:outputText value="#{agentBean.agent.agent_surname}" title="Agent_surname"/>
+                                <h:outputText value="Agent_other_names:"/>
+                                <h:outputText value="#{agentBean.agent.agent_other_names}" title="Agent_other_names"/>
+                                <h:outputText value="Is_active:"/>
+                                <h:outputText value="#{agentBean.agent.is_active}" title="Is_active"/>
+                                <h:outputText value="Agent_type:"/>
+                                <h:outputText value="#{agentBean.agent.agent_type.agent_type_name}" title="Agent_type"/>
+                                <h:outputText value="Agency:"/>
+                                <h:outputText value="#{agentBean.agent.agency}" title="Agency"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{agentBean.formstate.equals('delete')}" actionListener="#{agentBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{agentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{agentBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Agent" action="#{agentBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{agentBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{agentBean.agentList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{agentBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{agentBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{agentBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{agentBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{agentBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{agentBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>|
+                                    <p:commandLink actionListener="#{agentBean.enrollfingerprint(item)}" value="Enroll FP" process="@this" update=":fpenrollmentform" oncomplete="PF('EnrollmentDlg').show()">
+
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Agent name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.agent_surname}"/>
+                                    &nbsp;&nbsp;<h:outputText value="#{item.agent_other_names}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is active"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_active}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Agent type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.agent_type.agent_type_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Agency"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.agency.agency_name}"/>
+                                </p:column>                            
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="FP Status"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.status}"/>
+                                </p:column>                            
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+
+                <ui:include src="fingerprintenrolldialog.xhtml"/>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

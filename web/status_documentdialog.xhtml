@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Document Status</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Document type:"/>
+                <p:outputLabel value="#{staffBean.tempCurrent_staff_document.document_type.doc_type_name}"/>
+                <p:outputLabel value="Direction/Status:" for="direction" />
+                <p:selectOneMenu id="direction" value="#{staffBean.tempCurrent_staff_document.current_direction}" required="true" requiredMessage="The Direction field is required.">
+                    <f:selectItem itemLabel=""/>
+                    <f:selectItem itemLabel="IN" itemValue="IN" />
+                    <f:selectItem itemLabel="OUT" itemValue="OUT" />
+                    <f:selectItem itemLabel="N/A" itemValue="N/A" />
+                </p:selectOneMenu>
+                <p:outputLabel value="Reason:" for="reason" />
+                <p:selectOneMenu editable="true" id="reason" value="#{staffBean.tempCurrent_staff_document.current_direction_reason}" required="true" requiredMessage="The Direction reason field is required.">
+                    <f:selectItem itemLabel=""/>
+                    <f:selectItem itemLabel="Folder Update" itemValue="Folder Update" />
+                    <f:selectItem itemLabel="Leave" itemValue="Leave" />
+                    <f:selectItem itemLabel="Travel" itemValue="Travel" />
+                    <f:selectItem itemLabel="Chasing Local Permits(DP, etc)" itemValue="Chasing Local Permits(DP, etc)" />
+                    <f:selectItem itemLabel="Other Immigration Related Activities" itemValue="Other Immigration Related Activities" />
+                    <f:selectItem itemLabel="Other" itemValue="Other" />
+                </p:selectOneMenu>
+                <p:commandButton value="Save" actionListener="#{staffBean.updateCurrentDocumentStatus(staffBean.tempCurrent_staff_document.current_staff_documents_id, staffBean.tempCurrent_staff_document.current_direction, staffBean.tempCurrent_staff_document.current_direction_reason)}"  process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                <p:commandButton value="Cancel" actionListener="#{staffBean.closeDialogDocStatus(staffBean.tempCurrent_staff_document)}"  process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+            </p:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

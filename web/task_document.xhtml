@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Add/Edit" rendered="#{(task_documentBean.formstate.equals('edit') or task_documentBean.formstate.equals('add')) and task_documentBean.task_document!=null}">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Document type:" for="document_type" />
+                            <p:selectOneMenu id="document_type" value="#{task_documentBean.task_document.document_type}" required="true" requiredMessage="The Document type field is required." converter="document_typeConverter">
+                                <f:selectItem itemLabel="" />
+                                <f:selectItems value="#{document_typeBean.document_typeList}"
+                                               var="document_typeItem"
+                                               itemValue="#{document_typeItem}"
+                                               itemLabel="#{document_typeItem.doc_type_name}"
+                                               />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Upload document:" for="upload_document" />
+                            <p:fileUpload id="upload_document" value="#{task_documentBean.file}" mode="simple" rendered="true" requiredMessage="Task document is required" allowTypes="/(\.|\/)(pdf|docx|doc|jpg|png|gif)$/" >
+
+                            </p:fileUpload>
+                            <p:outputLabel value="Document ref no:" for="document_ref_no" />
+                            <p:inputText id="document_ref_no" value="#{task_documentBean.task_document.document_ref_no}" title="Document_ref_no" />
+                            <p:outputLabel value="Expiry date:" for="expiry_date" />
+                            <p:calendar id="expiry_date" pattern="dd-MM-yyyy" navigator="true" showButtonPanel="true" readonlyInput="true" value="#{task_documentBean.task_document.expiry_date}" title="Expiry_date" required="true" requiredMessage="Expiry date Required">
+                            </p:calendar>
+
+                        </p:panelGrid>
+                        <p:commandButton value="Save" actionListener="#{task_documentBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                        <p:commandButton value="Cancel" action="#{task_documentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        <p:commandButton value="Cancel2" actionListener="#{task_documentBean.calldialog()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                    </p:panel>
+                    <p:panel header="Delete/View" rendered="#{(task_documentBean.formstate.equals('delete') or task_documentBean.formstate.equals('view')) and task_documentBean.task_document!=null}">
+                        <h:outputText value="Are you sure you want to delete?" rendered="#{task_documentBean.formstate.equals('delete')}"/>
+                        <p:panelGrid columns="2">
+                            <h:outputText value="Task:"/>
+                            <h:outputText value="#{task_documentBean.task_document.task}" title="Task"/>
+                            <h:outputText value="Document type:"/>
+                            <h:outputText value="#{task_documentBean.task_document.document_type.doc_type_name}" title="Document type"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Delete" rendered="#{task_documentBean.formstate.equals('delete')}" actionListener="#{task_documentBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                        <p:commandButton value="Cancel" action="#{task_documentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                    </p:panel>
+                    <p:panel header="List" rendered="#{task_documentBean.formstate.equals('view')}">
+                        <center>
+                            <p:commandButton value="Add Task document" action="#{task_documentBean.add()}" update="@form" process="@all" icon="ui-icon-plus"/>
+                            <!--<p:outputLabel value="#{task_documentBean.formstate}"/>-->
+                        </center>
+                        <br/>
+
+                        <p:dataTable value="#{task_documentBean.task_documentList}" var="item">
+                            <p:column>
+                                <h:commandLink  action="#{task_documentBean.edit(item)}" value="Edit" immediate="true">
+                                    <f:ajax execute="@all" render="@form"/>
+                                    <f:setPropertyActionListener 
+                                        target="#{task_documentBean.formstate}" value="#{'edit'}" />
+                                </h:commandLink> | 
+                                <h:commandLink action="#{task_documentBean.delete(item)}" value="Delete" immediate="true">
+                                    <f:setPropertyActionListener 
+                                        target="#{task_documentBean.formstate}" value="#{'delete'}" />
+                                    <f:ajax execute="@all" render="@form"/>
+                                </h:commandLink> | 
+                                <h:commandLink action="#{task_documentBean.view(item)}" value="View" immediate="true">
+                                    <f:setPropertyActionListener 
+                                        target="#{task_documentBean.formstate}" value="#{'view'}" />
+                                    <f:ajax execute="@all" render="@form"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Task"/>
+                                </f:facet>
+                                <h:outputText value="#{item.task}"/>
+                            </p:column> 
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Document type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.document_type.doc_type_name}"/>
+                            </p:column>                        
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

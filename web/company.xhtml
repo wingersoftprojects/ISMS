@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="metadata">
+                <f:metadata>
+                    <f:event listener="#{companyBean.init()}" type="preRenderView" />
+                </f:metadata>
+            </ui:define>
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(companyBean.formstate.equals('edit') or companyBean.formstate.equals('add')) and companyBean.company!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Company full name:" for="company_name" />
+                                <p:inputText id="company_name" value="#{companyBean.company.company_name}" title="Company_name" required="true" requiredMessage="The Company_name field is required."/>
+                                <p:outputLabel value="Company short name:" for="abbreviated_name" />
+                                <p:inputText id="abbreviated_name" value="#{companyBean.company.abbreviated_name}" title="Abbreviated_name" required="true" requiredMessage="The Company short name field is required."/>
+                                <p:outputLabel value="Is active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{companyBean.company.is_active}" required="true" requiredMessage="The Is active field is required.">
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:panel header="Company Contacts" id="cc">
+                                <p:panelGrid columns="2" rendered="#{companyBean.company_contact!=null and (companyBean.company_contact_formstate.equals('add') or companyBean.company_contact_formstate.equals('edit'))}">
+                                    <p:outputLabel value="Contact_name:" for="contact_name" />
+                                    <p:inputText id="contact_name" value="#{companyBean.company_contact.contact_name}" title="Contact_name" required="true" requiredMessage="The Contact_name field is required.">
+                                        <p:ajax process="@this"/>
+                                    </p:inputText>
+                                    <p:outputLabel value="Contact_email:" for="contact_email" />
+                                    <p:inputText id="contact_email" value="#{companyBean.company_contact.contact_email}" title="Contact_email" required="true" requiredMessage="The Contact_email field is required." validatorMessage="Invalid email format">
+                                        <p:ajax process="@this"/>
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                    </p:inputText>
+                                    <p:outputLabel value="Contact_phone:" for="contact_phone" />
+                                    <p:inputText id="contact_phone" value="#{companyBean.company_contact.contact_phone}" title="Contact_phone">
+                                        <p:ajax process="@this"/>
+                                    </p:inputText>
+                                    <p:outputLabel value="Contact_title:" for="contact_title" />
+                                    <p:inputText id="contact_title" value="#{companyBean.company_contact.contact_title}" title="Contact_title">
+                                        <p:ajax process="@this"/>
+                                    </p:inputText>
+                                </p:panelGrid>
+                                <p:commandButton value="Add Contact" action="#{companyBean.save_company_contact}" update="@([id$=cc])" process="@this,contact_name,contact_email,contact_title,contact_phone" icon="ui-icon-disk"  rendered="#{companyBean.company_contact!=null and (companyBean.company_contact_formstate.equals('add') or companyBean.company_contact_formstate.equals('edit'))}" />
+                                <p:commandButton value="Cancel Contact" action="#{companyBean.cancel_company_contact}" process="@this" update="@([id$=cc])" icon="ui-icon-cancel" rendered="#{companyBean.company_contact!=null and (companyBean.company_contact_formstate.equals('add') or companyBean.company_contact_formstate.equals('edit'))}"/>
+                                <br/>
+                                <p:commandButton value="Add Contact" action="#{companyBean.add_company_contact()}" process="@this" update="@([id$=cc])" icon="ui-icon-plus" rendered="#{companyBean.company_contact_formstate.equals('view')}"/>
+                                <br/>
+                                <p:dataTable value="#{companyBean.company_contacts}" var="item">
+                                    <p:column>
+                                        <p:commandLink value="Remove" action="#{companyBean.remove_company_contact(item)}" process="@this" update="@([id$=cc])" />|
+                                        <p:commandLink value="Edit" action="#{companyBean.edit_company_contact(item)}" process="@this" update="@([id$=cc])" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Contact_name"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.contact_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Contact_email"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.contact_email}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Contact_phone"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.contact_phone}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Contact_title"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.contact_title}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <p:commandButton value="Save" actionListener="#{companyBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{companyBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(companyBean.formstate.equals('delete') or companyBean.formstate.equals('view')) and companyBean.company!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{companyBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Company full name:"/>
+                                <h:outputText value="#{companyBean.company.company_name}" title="Company_name"/>
+                                <h:outputText value="Company short name:"/>
+                                <h:outputText value="#{companyBean.company.abbreviated_name}" title="Company short name"/>
+                                <h:outputText value="Is active:"/>
+                                <h:outputText value="#{companyBean.company.is_active}" title="Is active"/>
+                            </p:panelGrid>
+                            <p:dataTable value="#{companyBean.company_contacts}" var="item">
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Contact_name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.contact_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Contact_email"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.contact_email}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Contact_phone"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.contact_phone}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Contact_title"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.contact_title}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Delete" rendered="#{companyBean.formstate.equals('delete')}" actionListener="#{companyBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{companyBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{companyBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Company" action="#{companyBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{companyBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{companyBean.companyList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{companyBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{companyBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{companyBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{companyBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{companyBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{companyBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Company full name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.company_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Company short name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.abbreviated_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is active"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_active}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      >
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <f:view>
+            <h:form>
+                <!--<applet code="fingerprint.Verify" archive="SignedFingerPrint2.jar, lib/dpotapi.jar, lib/dpotjni.jar, lib/dpuareu.jar, lib/Signed_mysql-connector-java-5.1.26.jar" width="600" height="400">
+                    <param name="nametoverify" id="parm" value="jwasswa"></param>   
+                </applet>-->
+                <applet code="fingerprint.Enroll" archive="SignedFingerPrint2.jar, lib/dpotapi.jar, lib/dpotjni.jar, lib/dpuareu.jar, lib/Signed_mysql-connector-java-5.1.26.jar" width="600" height="400">
+                    <param name="agent_id" id="parm" value="3"></param>   
+                </applet>
+            </h:form>
+        </f:view>
+
+    </h:body>
+</html>
+

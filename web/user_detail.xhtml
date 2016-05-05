@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="metadata">
+                <f:metadata>
+                    <f:event listener="#{user_detailBean.init()}" type="preRenderView" />
+                </f:metadata>
+            </ui:define>
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(user_detailBean.formstate.equals('edit') or user_detailBean.formstate.equals('add')) and user_detailBean.user_detail!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Staff:" for="staff" />
+                                <p:autoComplete id="staff" value="#{user_detailBean.user_detail.staff}"
+                                            completeMethod="#{staffBean.completeStaff}"
+                                            var="staff" itemLabel="#{staff.pp_surname.concat(' ').concat(staff.pp_given_names)}" itemValue="#{staff}" 
+                                            converter="staffConverter" forceSelection="true"  required="false" >
+                                <p:column headerText="Surname" style="text-align: left">
+                                    <h:outputText value="#{staff.pp_surname}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Given Names" style="text-align: left">
+                                    <h:outputText value="#{staff.pp_given_names}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:ajax event="itemSelect" process="@this"></p:ajax>
+                                <p:ajax event="change" process="@this"></p:ajax>
+                            </p:autoComplete>
+                                <p:outputLabel value="Username:" for="username" />
+                                <p:inputText id="username" value="#{user_detailBean.user_detail.username}" title="Username" required="true" requiredMessage="The Username field is required."/>
+                                <p:outputLabel value="Do you want to Reset Password:" for="changepw" rendered="#{user_detailBean.formstate.equals('edit')}" />
+                                <p:selectBooleanCheckbox id="changepw" value="#{user_detailBean.changepw}" rendered="#{user_detailBean.formstate.equals('edit')}">
+                                    <p:ajax update="@form" process="@this"/>
+                                </p:selectBooleanCheckbox>
+                                <p:outputLabel value="Password:" for="password" rendered="#{user_detailBean.changepw}" id="pwlabel" />
+                                <p:password id="password" value="#{user_detailBean.user_detail.password}" title="Password" required="true" requiredMessage="The Password field is required." rendered="#{user_detailBean.changepw}" />
+
+                                <p:outputLabel value="Is general admin:" for="is_general_admin" />
+                                <p:selectOneMenu id="is_general_admin" value="#{user_detailBean.user_detail.is_general_admin}" required="true" requiredMessage="The Is_general_admin field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Is active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{user_detailBean.user_detail.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{user_detailBean.save()}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{user_detailBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="Delete/View" rendered="#{(user_detailBean.formstate.equals('delete') or user_detailBean.formstate.equals('view')) and user_detailBean.user_detail!=null}">
+                            <h:outputText value="Are you sure you want to delete" rendered="#{user_detailBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Staff:"/>
+                                <p:outputLabel value="#{user_detailBean.user_detail.staff}"/>
+                                <p:outputLabel value="Username:"/>
+                                <p:outputLabel value="#{user_detailBean.user_detail.username}"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{user_detailBean.formstate.equals('delete')}" actionListener="#{user_detailBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{user_detailBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="List" rendered="#{user_detailBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add User detail" action="#{user_detailBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{user_detailBean.formstate}"/>-->
+                            </center>
+                            <br/>
+                            <h:form>
+                                <h1><h:outputText value="List"/></h1>
+                                <p:dataTable value="#{user_detailBean.user_detailList}" var="item">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Staff"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.staff.pp_surname.concat(' ').concat(item.staff.pp_given_names)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Username"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.username}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is general admin"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_general_admin}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:commandLink  action="#{user_detailBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                            <f:ajax execute="@all" render="@form"/>
+                                            <f:setPropertyActionListener 
+                                                target="#{user_detailBean.formstate}" value="#{'edit'}" />
+                                        </h:commandLink> | 
+                                        <h:commandLink action="#{user_detailBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                            <f:setPropertyActionListener 
+                                                target="#{user_detailBean.formstate}" value="#{'delete'}" />
+                                            <f:ajax execute="@all" render="@form"/>
+                                        </h:commandLink> | 
+                                        <h:commandLink action="#{user_detailBean.view(item)}" value="View" immediate="true">
+                                            <f:setPropertyActionListener 
+                                                target="#{user_detailBean.formstate}" value="#{'view'}" />
+                                            <f:ajax execute="@all" render="@form"/>
+                                        </h:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

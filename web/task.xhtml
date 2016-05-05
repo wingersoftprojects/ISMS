@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="taskform" rendered="#{loginBean.IsAllowed('TASK', 'Edit')}">
+                        <p:panel rendered="#{taskBean.task!=null}">
+                            <h1>
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel value="Staff Name:"/>
+                                    <p:outputLabel value="#{taskBean.task.staff.pp_surname.concat(' ').concat(taskBean.task.staff.pp_given_names)}"/>
+                                    <p:outputLabel value="Activity:"/>
+                                    <p:outputLabel value="#{taskBean.task.activity.activity_name}"/>
+                                </p:panelGrid>
+                            </h1>
+                            <p:panelGrid columns="2">
+                                <p:panel header="Complete Task (#{taskBean.task.activity.activity_name})">
+                                    <p:panelGrid columns="2">
+                                        <p:outputLabel value="Activity Outcome:" for="activity_outcome" />
+                                        <p:selectOneMenu id="activity_outcome" value="#{taskBean.task.activity_outcome}" converter="activity_outcomeConverter" required="true" requiredMessage="The Activity Outcome field is required.">
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{activity_outcomeBean.getActivity_outcomeList(taskBean.task.activity)}"
+                                                           var="activity_outcomeItem"
+                                                           itemValue="#{activity_outcomeItem}"
+                                                           itemLabel="#{activity_outcomeItem.activity_outcome_name}"
+                                                           />
+                                            <p:ajax process="@this"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Comment:" for="comment" />
+                                        <p:inputTextarea id="comment" value="#{taskBean.task.comment}" title="Comment" required="true" requiredMessage="The Comment field is required." >
+                                            <p:ajax process="@this"/>
+                                        </p:inputTextarea>
+
+                                        <p:outputLabel value="Agent:" for="agent"  rendered="#{taskBean.task.activity.is_agent_required.equals('Yes')}" />                  
+                                        <p:selectOneMenu id="agent" value="#{taskBean.task.agent}" converter="agentConverter" required="true" requiredMessage="The Agent field is required."  rendered="#{taskBean.task.activity.is_agent_required.equals('Yes')}">
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{agentBean.agentList}"
+                                                           var="agentItem"
+                                                           itemValue="#{agentItem}"
+                                                           itemLabel="#{agentItem.agent_surname.concat(' ').concat(agentItem.agent_other_names)}"
+                                                           />
+                                            <p:ajax process="@this" listener="#{taskBean.setagent()}" event="change" update=":fpverifyform,:pollingform" oncomplete="PF('VerifyDlg').show()"/>
+                                        </p:selectOneMenu>
+
+                                        <!--<p:outputLabel value="Assigned user:" for="assigned_user" />
+                                        <p:selectOneMenu id="assigned_user" value="#{taskBean.task.assigned_user}" converter="user_detailConverter" required="true" requiredMessage="The User field is required.">
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{user_detailBean.user_detailList}"
+                                                           var="user_detailItem"
+                                                           itemValue="#{user_detailItem}"
+                                                           itemLabel="#{user_detailItem.username}"
+                                                           />
+                                        </p:selectOneMenu>-->
+
+                                        <p:outputLabel value="Approval_type:" for="approval_type"  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}"  />
+                                        <p:selectOneMenu id="approval_type" value="#{taskBean.task.approval_type}" converter="approval_typeConverter" required="true" requiredMessage="The Approval type field is required."  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}" >
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{approval_typeBean.approval_typeList}"
+                                                           var="approval_typeItem"
+                                                           itemValue="#{approval_typeItem}"
+                                                           itemLabel="#{approval_typeItem.approval_type_name}"
+                                                           />
+                                            <p:ajax process="@this"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Approval by:" for="approval_by"  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}" />
+                                        <p:selectOneMenu id="approval_by" value="#{taskBean.task.approval_by}" converter="user_detailConverter" required="true" requiredMessage="The Approval by field is required."  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}" >
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{user_detailBean.user_detailList}"
+                                                           var="user_detailItem"
+                                                           itemValue="#{user_detailItem}"
+                                                           itemLabel="#{user_detailItem.username}"
+                                                           />
+                                            <p:ajax process="@this"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Approval_date:" for="approval_date"  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}"  />
+                                        <p:calendar id="approval_date" value="#{taskBean.approval_date}" title="Approval_date" pattern="dd-MMM-yyyy" navigator="true" required="true" requiredMessage="The Approval date field is required."  rendered="#{taskBean.task.activity.is_approval_required.equals('Yes')}" >
+                                            <p:ajax process="@this"/>
+                                        </p:calendar>
+                                    </p:panelGrid>
+                                    <p:messages closable="true" showDetail="true"/>
+                                    <p:panel header="Uploaded Task Documents">
+                                        <center>
+                                            <p:commandButton icon="ui-icon-extlink" id="upload_doc" value="Upload Documents" actionListener="#{task_documentBean.calldialog()}" process="@this">
+                                                <f:actionListener binding="#{task_documentBean.add()}"/>
+                                                <p:ajax event="dialogReturn" update="task_documents_table"  listener="#{taskBean.ontaskDocumentChosen}" />
+                                            </p:commandButton>
+                                        </center>
+                                        <br/>
+                                        <p:dataTable value="#{taskBean.task_documentList}" var="item" id="task_documents_table">
+                                            <p:column>
+                                                <h:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}">
+                                                    <h:graphicImage id="img_immigration" value="image/#{item.document_url}" width="100px" height="100px" />
+                                                    <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.document_url}" />
+                                                </h:commandLink>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Expiry date"/>
+                                                </f:facet>
+                                                <h:outputText value="#{item.expiry_date}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Document ref no"/>
+                                                </f:facet>
+                                                <h:outputText value="#{item.document_ref_no}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Document type"/>
+                                                </f:facet>
+                                                <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panel>
+                                    <br/>
+                                    <p:commandButton value="Complete Task" update="@form,:notificationform,:sendemailform" action="#{taskBean.showEmailDialog()}" actionListener="#{taskBean.completeTask}"/>
+                                    <p:commandButton value="Cancel" process="@this" actionListener="#{taskBean.cancel}" update="@form"/>
+                                    <br/>
+                                </p:panel>
+                                <p:panel header="Task Required Documents">
+                                    <p:dataTable value="#{taskBean.required_documentList}" var="item">
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Document type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Is mandatory"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.is_mandatory}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Direction"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.direction}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Pending Task List" rendered="#{taskBean.task==null}">
+                            <p:dataTable value="#{taskBean.allTasks}" var="item">
+                                <!--<p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Complete_date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.complete_date}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Completed_by"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.completed_by}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Approval_date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.approval_date}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Comment"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.comment}"/>
+                                </p:column>-->
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Task status"/>
+                                    </f:facet>
+                                    <p:commandLink value="#{item.task_status}" update="@form" rendered="#{loginBean.IsAllowed('TASK', 'Edit')}">
+                                        <f:setPropertyActionListener target="#{taskBean.task}" value="#{item}" />
+                                        <f:actionListener binding="#{taskBean.populatedocumentlist()}"/>
+                                    </p:commandLink>|
+                                    <p:commandLink value="Kill Task" style="color: red;" update="@form" actionListener="#{taskBean.killTask(item)}" rendered="#{loginBean.IsAllowed('TASK', 'Edit')}">
+                                        <p:confirm header="Confirmation" message="Are you sure you want to kill this task?" icon="ui-icon-alert" />
+                                    </p:commandLink>
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity.activity_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Staff"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff.pp_surname.concat(' ').concat(item.staff.pp_given_names)}"/>
+                                </p:column>
+                                <!--<p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Assigned_user"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.assigned_user.username}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Approval_by"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.approval_by}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Approval_type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.approval_type}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity_outcome"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity_outcome}"/>
+                                </p:column>-->
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+                <p:confirmDialog header="Send Email!" closable="false" global="true" showEffect="fade" hideEffect="explode"  widgetVar="sendemail"  message="Choice">
+                    <h:form id="sendemailform">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Email To" for="emailto"/>
+                            <p:inputTextarea value="#{taskBean.emailto}" id="emailto" required="true" requiredMessage="Email To Field is required"/>
+                            <p:outputLabel value="Copy To" for="emailcopyto"/>
+                            <p:inputTextarea value="#{taskBean.emailcopyto}" id="emailcopyto" required="true" requiredMessage="Email Copy To Field is required"/>
+                            <p:outputLabel value="Subject" for="emailsubject"/>
+                            <p:inputTextarea value="#{taskBean.emailsubject}" id="emailsubject" required="true" requiredMessage="Email Subject Field is required"/>
+                            <p:outputLabel value="Email Body" for="emailmessage"/>
+                            <p:inputTextarea value="#{taskBean.emailmessage}" id="emailmessage" required="true" requiredMessage="Email Message Field is required"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Send Email" actionListener="#{taskBean.sendEmail}" icon="ui-icon-check"  update="@form,:taskform" >
+                        </p:commandButton>
+                        <p:commandButton value="Cancel" process="@this" update="@form,:taskform" actionListener="#{taskBean.closeDialog()}" >
+
+                        </p:commandButton>
+                    </h:form>
+                </p:confirmDialog>
+                <ui:include src="fingerprintverifydialog.xhtml"/>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

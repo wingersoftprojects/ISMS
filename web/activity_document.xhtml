@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <p:panel header="Add/Edit" rendered="#{(activity_documentBean.formstate.equals('edit') or activity_documentBean.formstate.equals('add')) and activity_documentBean.activity_document!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity:" for="activity" />
+                                <p:selectOneMenu id="activity" value="#{activity_documentBean.activity_document.activity}" converter="activityConverter" required="true" requiredMessage="The Activity field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{activityBean.activityList}"
+                                                   var="activityItem"
+                                                   itemValue="#{activityItem}"
+                                                   itemLabel="#{activityItem.activity_name}"
+                                                   />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Document type:" for="document_type" />
+                                <p:selectOneMenu id="document_type" value="#{activity_documentBean.activity_document.document_type}" converter="document_typeConverter" required="true" requiredMessage="The Document_type field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{document_typeBean.document_typeList}"
+                                                   var="document_typeItem"
+                                                   itemValue="#{document_typeItem}"
+                                                   itemLabel="#{document_typeItem.doc_type_name}"
+                                                   />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Is mandatory:" for="is_mandatory" />
+                                <p:selectOneMenu id="is_mandatory" value="#{activity_documentBean.activity_document.is_mandatory}" required="true" requiredMessage="The Is_mandatory field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Direction:" for="direction" />
+                                <p:selectOneMenu id="direction" value="#{activity_documentBean.activity_document.direction}" required="true" requiredMessage="The Direction field is required.">
+                                    <f:selectItem itemLabel="IN" itemValue="IN" />
+                                    <f:selectItem itemLabel="OUT" itemValue="OUT" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Is active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{activity_documentBean.activity_document.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{activity_documentBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{activity_documentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="Delete/View" rendered="#{(activity_documentBean.formstate.equals('delete') or activity_documentBean.formstate.equals('view')) and activity_documentBean.activity_document!=null}">
+                            <h:outputText value="Are you sure you want to delete" rendered="#{activity_documentBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity:"/>
+                                <p:outputLabel value="#{activity_documentBean.activity_document.activity}"/>
+                                <p:outputLabel value="Document type:"/>
+                                <p:outputLabel value="#{activity_documentBean.activity_document.document_type}"/>
+                                <p:outputLabel value="Direction:"/>
+                                <p:outputLabel value="#{activity_documentBean.activity_document.direction}"/>
+                                <p:outputLabel value="Is active:"/>
+                                <p:outputLabel value="#{activity_documentBean.activity_document.is_active}"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{activity_documentBean.formstate.equals('delete')}" actionListener="#{activity_documentBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{activity_documentBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+
+                        <p:panel header="List" rendered="#{activity_documentBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Activity document" action="#{activity_documentBean.add()}" update="@form" process="@all" icon="ui-icon-plus"/>
+                                <!--<p:outputLabel value="#{activity_documentBean.formstate}"/>-->
+                            </center>
+                            <br/>
+                            <h:form>
+                                <h1><h:outputText value="List"/></h1>
+                                <p:dataTable value="#{activity_documentBean.activity_documentList}" var="item">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Activity"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.activity}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Document type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.document_type}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is mandatory"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_mandatory}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Direction"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.direction}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Is active"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.is_active}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:commandLink  action="#{activity_documentBean.edit(item)}" value="Edit" immediate="true">
+                                            <f:ajax execute="@all" render="@form"/>
+                                            <f:setPropertyActionListener 
+                                                target="#{activity_documentBean.formstate}" value="#{'edit'}" />
+                                        </h:commandLink> | 
+                                        <h:commandLink action="#{activity_documentBean.delete(item)}" value="Delete" immediate="true">
+                                            <f:setPropertyActionListener 
+                                                target="#{activity_documentBean.formstate}" value="#{'delete'}" />
+                                            <f:ajax execute="@all" render="@form"/>
+                                        </h:commandLink> | 
+                                        <h:commandLink action="#{activity_documentBean.view(item)}" value="View" immediate="true">
+                                            <f:setPropertyActionListener 
+                                                target="#{activity_documentBean.formstate}" value="#{'view'}" />
+                                            <f:ajax execute="@all" render="@form"/>
+                                        </h:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

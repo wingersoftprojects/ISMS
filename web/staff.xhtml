@@ -1,0 +1,1257 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="metadata">
+                <f:metadata>
+                    <f:event listener="#{staffBean.init()}" type="preRenderView" />
+                </f:metadata>
+            </ui:define>
+            <ui:define name="content">
+                <h:form rendered="#{loginBean.IsAllowed('FOLDER', 'View')}" id="staffform" prependId="false" onkeypress="if (event.keycode == 13)
+                            return false;">
+                    <p:growl showDetail="true" id="staffformgrowl"/>
+                    <p:messages closable="true" showDetail="true" id="staffformmessages"/>
+                    <p:panel header="Add/Edit" rendered="#{(staffBean.formstate.equals('edit') or staffBean.formstate.equals('add')) and staffBean.staff!=null}">
+                        <p:wizard flowListener="#{staffBean.onFlowProcess}" widgetVar="wiz" showNavBar="true" showStepStatus="true">
+                            <p:tab title="Staff Details" id="staffdetails">
+                                <p:panelGrid columns="2">
+                                    <p:panel header="Bio Data">
+                                        <p:panelGrid columns="2">
+                                            <p:outputLabel value="Surname:" for="pp_surname" />
+                                            <p:inputText id="pp_surname" value="#{staffBean.staff.pp_surname}" title="Passport_surname" required="true" requiredMessage="The Passport_surname field is required."/>
+                                            <p:outputLabel value="Given Names:" for="pp_given_names" />
+                                            <p:inputText id="pp_given_names" value="#{staffBean.staff.pp_given_names}" title="Passport_given_names" required="true" requiredMessage="The Passport_given_names field is required."/>                                        
+                                            <p:outputLabel value="DOB:" for="pp_date_of_birth" />
+                                            <p:calendar id="pp_date_of_birth" value="#{staffBean.staff.pp_date_of_birth}" pattern="dd/MMM/yyyy" title="Passport_date_of_birth" navigator="true" required="true" requiredMessage="The Passport_date_of_birth field is required." widgetVar="pp_date_of_birth">
+
+                                            </p:calendar>
+                                            <p:outputLabel value="Gender:" for="pp_sex" />
+                                            <p:selectOneMenu id="pp_sex" value="#{staffBean.staff.pp_sex}" required="true" requiredMessage="The Gender field is required.">
+                                                <f:selectItem itemLabel=""/>
+                                                <f:selectItem itemLabel="Male" itemValue="Male" />
+                                                <f:selectItem itemLabel="Female" itemValue="Female" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Nationality:" for="pp_nationality" />
+                                            <p:inputText id="pp_nationality" value="#{staffBean.staff.pp_nationality}" title="pp_nationality" required="true" requiredMessage="The Nationality field is required."/>
+                                            <!--<p:selectOneMenu id="pp_nationality" value="#{staffBean.staff.pp_nationality}" converter="nationalityConverter" required="true" requiredMessage="The Nationality field is required.">
+                                                <f:selectItem itemLabel="" />
+                                                <f:selectItems value="#{nationalityBean.nationalityList}"
+                                                               var="nationalityItem"
+                                                               itemValue="#{nationalityItem}"
+                                                               itemLabel="#{nationalityItem.nationality_name}"
+                                                               />
+                                            </p:selectOneMenu>-->
+
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <p:panel header="Passport">
+                                        <p:panelGrid columns="2">
+                                            <!--<p:outputLabel value="Type:" for="pp_type" />
+                                            <p:selectOneMenu id="pp_type" value="#{staffBean.staff.pp_type}" required="true" requiredMessage="The Passport Type field is required.">
+                                                <f:selectItem itemLabel="" itemValue="" />
+                                                <f:selectItem itemLabel="Ordinally" itemValue="Ordinally" />
+                                                <f:selectItem itemLabel="Diplomatic" itemValue="Diplomatic" />
+                                            </p:selectOneMenu>-->
+                                            <!--<p:outputLabel value="Country:" for="pp_country" />
+                                            <p:selectOneMenu id="pp_country" value="#{staffBean.staff.pp_country}" required="true" requiredMessage="The Country field is required.">
+                                                <f:selectItem itemLabel="" />
+                                                <f:selectItems value="#{nationalityBean.nationalityList}"
+                                                               var="nationalityItem"
+                                                               itemValue="#{nationalityItem.nationality_name}"
+                                                               itemLabel="#{nationalityItem.nationality_name}"
+                                                               />
+                                            </p:selectOneMenu>-->
+                                            <p:outputLabel value="Passport no:" for="pp_passport_no" />
+                                            <p:inputText id="pp_passport_no" value="#{staffBean.staff.pp_passport_no}" title="Passport_passport_no" required="true" requiredMessage="The Pasport number field is required" >
+                                                <p:ajax event="blur" update="staffformgrowl staffformmessages" process="@this" listener="#{staffBean.checkduplicatepassport()}"/>
+                                            </p:inputText>
+                                            <!--<p:outputLabel value="Profession:" for="pp_profession" />
+                                            <p:inputText id="pp_profession" value="#{staffBean.staff.pp_profession}" title="Passport_profession" />-->
+                                            <p:outputLabel value="Issued From:" for="pp_issuedby" />
+                                            <p:inputText id="pp_issuedby" value="#{staffBean.staff.pp_issuedby}" title="Passport_authority" required="true" requiredMessage="The Pasport Issued by field is required." />
+                                            <!--<p:outputLabel value="Date of issue:" for="pp_date_of_issue" />
+                                            <p:calendar id="pp_date_of_issue" size="12" value="#{staffBean.staff.pp_date_of_issue}" pattern="dd/MMM/yyyy" navigator="true" title="Passport_date_of_issue" required="true" requiredMessage="The Passport Issue Date field is required." >
+                                            </p:calendar>-->
+                                            <p:outputLabel value="Expiry Date" for="pp_date_of_expiry" />
+                                            <p:calendar id="pp_date_of_expiry" size="12" value="#{staffBean.staff.pp_date_of_expiry}" pattern="dd/MMM/yyyy" title="Passport_Expiry_Date" navigator="true" required="true" requiredMessage="The Passport Expiry Date field is required." >
+                                            </p:calendar>
+                                            <!--<p:outputLabel value="Place of birth:" for="pp_place_of_birth" />
+                                            <p:inputText id="pp_place_of_birth" value="#{staffBean.staff.pp_place_of_birth}" title="Passport_place_of_birth" />-->
+                                        </p:panelGrid>
+                                    </p:panel>
+                                </p:panelGrid>
+                                <h:outputText value="Skip to last: " />
+                                <h:selectBooleanCheckbox value="#{staffBean.skip}" />
+                            </p:tab>
+                            <p:tab title="Employment Details" id="employmentdetails">
+                                <p:panelGrid columns="4">
+                                    <p:outputLabel value="Staff type:" for="staff_type" />
+                                    <p:selectOneMenu id="staff_type" value="#{staffBean.staff.staff_type}" converter="staff_typeConverter">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{staff_typeBean.staff_typeList}"
+                                                       var="staff_typeItem"
+                                                       itemValue="#{staff_typeItem}"
+                                                       itemLabel="#{staff_typeItem.staff_type_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Email:" for="email" />
+                                    <p:inputText id="email" value="#{staffBean.staff.email}" title="Email" >
+                                        <p:ajax process="@this"/>
+                                        <!--<f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />-->
+                                    </p:inputText>
+                                    <p:outputLabel value="Post:" for="post" />
+                                    <p:selectOneMenu id="post" value="#{staffBean.staff.staff_post}" converter="staff_postConverter" required="true" requiredMessage="The Staff Post field is required.">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{staff_postBean.staff_postList}"
+                                                       var="staffpostItem"
+                                                       itemValue="#{staffpostItem}"
+                                                       itemLabel="#{staffpostItem.staff_post_name}"
+                                                       />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Join_date:" for="join_date" />
+                                    <p:calendar id="join_date" size="12" value="#{staffBean.staff.join_date}" pattern="dd/MMM/yyyy" navigator="true" title="Join_date">
+
+                                    </p:calendar>
+                                    <p:outputLabel value="Contract Start Date:" for="contract_start_date" />
+                                    <p:calendar id="contract_start_date" size="12" value="#{staffBean.staff.contract_start_date}" pattern="dd/MMM/yyyy" navigator="true" title="contract_start_date">
+
+                                    </p:calendar>
+                                    <p:outputLabel value="Contract End date:" for="contract_end_date" />
+                                    <p:calendar id="contract_end_date" size="12" value="#{staffBean.staff.contract_end_date}" pattern="dd/MMM/yyyy" navigator="true" title="contract_end_date">
+
+                                    </p:calendar>
+                                    <p:outputLabel value="Phone 1:" for="phone1" />
+                                    <p:inputText id="phone1" value="#{staffBean.staff.phone1}" title="phone1" />
+                                    <p:outputLabel value="Phone 2:" for="phone2" />
+                                    <p:inputText id="phone2" value="#{staffBean.staff.phone2}" title="phone2" />
+                                    <p:outputLabel value="Is active:" for="is_active" />
+                                    <p:selectOneMenu id="is_active" value="#{staffBean.staff.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                        <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                        <f:selectItem itemLabel="No" itemValue="No" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Company:" for="company" />
+                                    <p:selectOneMenu id="company" value="#{staffBean.staff.company}" converter="companyConverter" required="true" requiredMessage="The Company field is required.">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{companyBean.companyList}"
+                                                       var="companyItem"
+                                                       itemValue="#{companyItem}"
+                                                       itemLabel="#{companyItem.company_name}"
+                                                       />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Recruit agent:" for="recruit_agent" />
+                                    <p:selectOneMenu id="recruit_agent" value="#{staffBean.staff.recruit_agent}" converter="agentConverter">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{agentBean.agentList}"
+                                                       var="recruit_agentItem"
+                                                       itemValue="#{recruit_agentItem}"
+                                                       itemLabel="#{recruit_agentItem.agent_surname.concat(' ').concat(recruit_agentItem.agent_other_names)}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Accommodation type:" for="accom_type" />
+                                    <p:selectOneMenu id="accom_type" value="#{staffBean.staff.accom_type}" converter="accommodation_typeConverter" required="true" requiredMessage="The Accomodation Type field is required.">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{accommodation_typeBean.accommodation_typeList}"
+                                                       var="accommodation_typeItem"
+                                                       itemValue="#{accommodation_typeItem}"
+                                                       itemLabel="#{accommodation_typeItem.accommodation_type_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Exit mode:" for="exit_mode" />
+                                    <p:selectOneMenu id="exit_mode" value="#{staffBean.staff.exit_mode}" converter="exit_modeConverter">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{exit_modeBean.exit_modeList}"
+                                                       var="exit_modeItem"
+                                                       itemValue="#{exit_modeItem}"
+                                                       itemLabel="#{exit_modeItem.exit_mode_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Exit date:" for="exit_date" />
+                                    <p:calendar id="exit_date" size="12" value="#{staffBean.staff.exit_date}" pattern="dd/MMM/yyyy" navigator="true" title="Exit_date" >
+                                    </p:calendar>
+
+                                    <p:outputLabel value="Cabinet No:" for="cabinet_no" />
+                                    <p:selectOneMenu id="cabinet_no" value="#{staffBean.staff.cabinet_no}">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItem itemLabel="1" itemValue="1" />
+                                        <f:selectItem itemLabel="2" itemValue="2" />
+                                        <f:selectItem itemLabel="3" itemValue="3" />
+                                        <f:selectItem itemLabel="4" itemValue="4" />
+                                        <f:selectItem itemLabel="5" itemValue="5" />
+                                        <f:selectItem itemLabel="6" itemValue="6" />
+                                        <f:selectItem itemLabel="7" itemValue="7" />
+                                        <f:selectItem itemLabel="8" itemValue="8" />
+                                        <f:selectItem itemLabel="9" itemValue="9" />
+                                        <f:selectItem itemLabel="10" itemValue="10" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Cabinet Section:" for="cabinet_section" />
+                                    <p:selectOneMenu id="cabinet_section" value="#{staffBean.staff.cabinet_section}">
+                                        <f:selectItem itemLabel=""/>
+                                        <f:selectItem itemLabel="A" itemValue="A" />
+                                        <f:selectItem itemLabel="B" itemValue="B" />
+                                        <f:selectItem itemLabel="C" itemValue="C" />
+                                        <f:selectItem itemLabel="D" itemValue="D" />
+                                        <f:selectItem itemLabel="E" itemValue="E" />
+                                    </p:selectOneMenu>
+
+                                </p:panelGrid>
+                                <p:panel header="Ticket">
+                                    <p:outputLabel value="Air ticket type/Contract Type:" for="air_ticket_type" />
+                                    <p:selectOneMenu id="air_ticket_type" value="#{staffBean.staff.air_ticket_type}" converter="air_ticket_typeConverter">
+                                        <f:selectItem itemLabel="" />
+                                        <f:selectItems value="#{air_ticket_typeBean.air_ticket_typeList}"
+                                                       var="air_ticket_typeItem"
+                                                       itemValue="#{air_ticket_typeItem}"
+                                                       itemLabel="#{air_ticket_typeItem.air_ticket_type_name}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:panel id="ticket_panel">
+                                        <h:panelGrid columns="8">
+                                            <h:outputText value="Spouse: " />
+                                            <p:selectBooleanCheckbox value="#{staffBean.staff.spouse}">
+                                                <p:ajax update="@form:ticket_panel" process="@this" />
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel id="spouse_label" value="Spouse Name:" for="spouse_name" rendered="#{staffBean.staff.spouse}" />
+                                            <p:inputText id="spouse_name" value="#{staffBean.staff.spouse_name}" title="spouse_name"  rendered="#{staffBean.staff.spouse}" required="true" />
+                                            <p:outputLabel id="spouse_passport_no_label" value="Spouse Passport No:" for="spouse_passport_no" rendered="#{staffBean.staff.spouse}" />
+                                            <p:inputText id="spouse_passport_no" value="#{staffBean.staff.spouse_passport_no}" title="spouse_passport_no"  rendered="#{staffBean.staff.spouse}" required="true" />
+                                            <p:outputLabel id="spouse_visa_expiry_date_label" value="Spouse Visa Expiry Date:" for="spouse_visa_expiry_date" rendered="#{staffBean.staff.spouse}" />
+                                            <p:calendar id="spouse_visa_expiry_date" size="12" value="#{staffBean.staff.spouse_visa_expiry_date}" pattern="dd/MMM/yyyy" navigator="true" title="spouse_visa_expiry_date"  rendered="#{staffBean.staff.spouse}" required="true"/>
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="8">
+                                            <h:outputText value="Kid 1: " />
+                                            <p:selectBooleanCheckbox value="#{staffBean.staff.kid1}">
+                                                <p:ajax update="@form:ticket_panel" process="@this" />
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel id="kid1_label" value="Kid 1 Name:" for="kid1_name" rendered="#{staffBean.staff.kid1}" />
+                                            <p:inputText id="kid1_name" value="#{staffBean.staff.kid1_name}" title="kid1_name"  rendered="#{staffBean.staff.kid1}" required="true" />
+                                            <p:outputLabel id="kid1_passport_no_label" value="Kid 1 Passport No:" for="kid1_passport_no" rendered="#{staffBean.staff.kid1}" />
+                                            <p:inputText id="kid1_passport_no" value="#{staffBean.staff.kid1_passport_no}" title="kid1_passport_no"  rendered="#{staffBean.staff.kid1}" required="true" />
+                                            <p:outputLabel id="kid1_visa_expiry_date_label" value="Kid 1 Visa Expiry Date:" for="kid1_visa_expiry_date" rendered="#{staffBean.staff.kid1}" />
+                                            <p:calendar id="kid1_visa_expiry_date" size="12" value="#{staffBean.staff.kid1_visa_expiry_date}" pattern="dd/MMM/yyyy" navigator="true" title="kid1_visa_expiry_date"  rendered="#{staffBean.staff.kid1}" required="true"/>
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="8">
+                                            <h:outputText value="Kid 2: " />
+                                            <p:selectBooleanCheckbox value="#{staffBean.staff.kid2}">
+                                                <p:ajax update="@form:ticket_panel" process="@this" />
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel id="kid2_label" value="Kid 2 Name:" for="kid2_name" rendered="#{staffBean.staff.kid2}" />
+                                            <p:inputText id="kid2_name" value="#{staffBean.staff.kid2_name}" title="kid2_name"  rendered="#{staffBean.staff.kid2}" required="true" />
+                                            <p:outputLabel id="kid2_passport_no_label" value="Kid 2 Passport No:" for="kid2_passport_no" rendered="#{staffBean.staff.kid2}" />
+                                            <p:inputText id="kid2_passport_no" value="#{staffBean.staff.kid2_passport_no}" title="kid2_passport_no"  rendered="#{staffBean.staff.kid2}" required="true" />
+                                            <p:outputLabel id="kid2_visa_expiry_date_label" value="Kid 2 Visa Expiry Date:" for="kid2_visa_expiry_date" rendered="#{staffBean.staff.kid2}" />
+                                            <p:calendar id="kid2_visa_expiry_date" size="12" value="#{staffBean.staff.kid2_visa_expiry_date}" pattern="dd/MMM/yyyy" navigator="true" title="kid2_visa_expiry_date"  rendered="#{staffBean.staff.kid2}" required="true"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:panel>
+                                <h:outputText value="Skip to last: " />
+                                <h:selectBooleanCheckbox value="#{staffBean.skip}" />
+                            </p:tab>
+                            <p:tab title="Staff Salary" id="salarydetails">
+                                <p:panel id="ss">
+                                    <p:panelGrid columns="2" rendered="#{staffBean.staff_salary!=null and (staffBean.staff_salary_formstate.equals('add') or staffBean.staff_salary_formstate.equals('edit'))}">
+                                        <p:outputLabel value="Salary currency:" for="salary_currency" />
+                                        <p:selectOneMenu id="salary_currency" value="#{staffBean.staff_salary.currency_type}" converter="currency_typeConverter" required="true" requiredMessage="The Salary_currency field is required.">
+                                            <f:selectItem itemLabel="" />
+                                            <f:selectItems value="#{currency_typeBean.currency_typeList}"
+                                                           var="currency_typeItem"
+                                                           itemValue="#{currency_typeItem}"
+                                                           itemLabel="#{currency_typeItem.currency_type_name}"
+                                                           />
+                                            <p:ajax process="@this"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Salary:" for="salary" />
+                                        <p:inputText id="salary" value="#{staffBean.staff_salary.salary}" title="Salary" required="true" requiredMessage="The Salary field is required.">
+                                            <p:ajax process="@this"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="Start Date:" for="startdate" />
+                                        <p:calendar id="startdate" value="#{staffBean.staff_salary.startdate}" title="Salary" pattern="dd/MM/yyyy" timeZone="EAT" navigator="true" required="true" requiredMessage="The Start date is required.">
+                                            <p:ajax event="dateSelect" process="@this"/>
+                                            <p:ajax event="change" process="@this"/>
+                                        </p:calendar>
+                                        <p:outputLabel value="End Date:" for="enddate" />
+                                        <p:calendar id="enddate" value="#{staffBean.staff_salary.enddate}" title="Salary" pattern="dd/MM/yyyy" timeZone="EAT" navigator="true">
+                                            <p:ajax event="dateSelect" process="@this"/>
+                                            <p:ajax event="change" process="@this"/>
+                                        </p:calendar>
+                                        <p:outputLabel value="Is Net Or Gross:" for="is_net_or_gross" />
+                                        <p:selectOneMenu id="is_net_or_gross" value="#{staffBean.staff_salary.is_net_or_gross}" required="true" requiredMessage="The is_net or_gross field is required.">
+                                            <f:selectItem itemLabel="Gross" itemValue="Gross" />
+                                            <f:selectItem itemLabel="Net" itemValue="Net" />
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <p:commandButton value="Add Staff Salary" action="#{staffBean.save_staff_salary}" update="@([id$=ss])" process="@this,salary,salary_currency,is_net_or_gross" icon="ui-icon-disk"  rendered="#{staffBean.staff_salary!=null and (staffBean.staff_salary_formstate.equals('add') or staffBean.staff_salary_formstate.equals('edit'))}" />
+                                    <p:commandButton value="Cancel Staff Salary" action="#{staffBean.cancel_staff_salary}" process="@this" update="@([id$=ss])" icon="ui-icon-cancel" rendered="#{staffBean.staff_salary!=null and (staffBean.staff_salary_formstate.equals('add') or staffBean.staff_salary_formstate.equals('edit'))}"/>
+                                    <br/>
+                                    <p:commandButton value="Add Staff Salary" action="#{staffBean.add_staff_salary()}" process="@this" update="@([id$=ss])" icon="ui-icon-plus" rendered="#{staffBean.staff_salary_formstate.equals('view')}"/>
+                                    <br/>
+                                    <br/>
+                                    <p:dataTable value="#{staffBean.filtered_salaryscurrent()}" var="item">
+                                        <f:facet name="header">
+                                            Current Salary
+                                        </f:facet>
+                                        <!--<c:if test="#{item.is_active.equals('Yes') and item.enddate==null}">-->
+                                        <p:column>
+                                            <p:commandLink value="Increment" action="#{staffBean.increment_staff_salary(item)}" process="@this" update="@([id$=ss])" />|
+                                            <p:commandLink value="Delete" action="#{staffBean.remove_staff_salary(item)}" process="@this" update="@([id$=ss])" />|
+                                            <p:commandLink value="Edit" action="#{staffBean.edit_staff_salary(item)}" process="@this" update="@([id$=ss])" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Salary"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.salary}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Currency type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Start Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.startdate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="End Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.enddate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Is Net Or Gross"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.is_net_or_gross}">
+                                            </h:outputText>
+                                        </p:column>
+                                        <!--</c:if>-->
+                                    </p:dataTable>
+                                    <br/>
+                                    <p:dataTable value="#{staffBean.filtered_salaryshistory()}" var="item">
+                                        <f:facet name="header">
+                                            Historical Salary
+                                        </f:facet>
+                                        <!--<p:column>
+                                            <p:commandLink value="Increment" action="#{staffBean.increment_staff_salary(item)}" process="@this" update="@([id$=ss])" />|
+                                            <p:commandLink value="Delete" action="#{staffBean.remove_staff_salary(item)}" process="@this" update="@([id$=ss])" />|
+                                            <p:commandLink value="Edit" action="#{staffBean.edit_staff_salary(item)}" process="@this" update="@([id$=ss])" />
+                                        </p:column>-->
+                                        <!--<c:if test="#{item.is_active.equals('No') and item.enddate!=null}">-->
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Salary"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.salary}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Currency type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Start Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.startdate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="End Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.enddate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Is Net Or Gross"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.is_net_or_gross}">
+                                            </h:outputText>
+                                        </p:column>
+                                        <!--</c:if>-->
+                                    </p:dataTable>
+                                </p:panel>
+                                <h:outputText value="Skip to last: " />
+                                <h:selectBooleanCheckbox value="#{staffBean.skip}" />
+                            </p:tab>
+                            <p:tab title="Staff Documents" id="documentdetails">
+                                <p:panelGrid columns="3">
+                                    <p:outputLabel value="Staff Document (Any Other):" />
+                                    <p:commandButton id="upload_doc" value="Upload" actionListener="#{task_documentBean.calldialog()}" process="@this">
+                                        <f:actionListener binding="#{task_documentBean.add()}"/>
+                                        <p:ajax event="dialogReturn" update="current_staff_documents_table"  listener="#{staffBean.ontaskDocumentChosen}" />
+                                    </p:commandButton>
+
+                                </p:panelGrid>
+                                <h1>Staff Current Documents</h1>
+                                <p:dataTable value="#{staffBean.current_staff_documentsList}" var="item" id="current_staff_documents_table">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Document Type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Doc Ref No"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.task_document.document_ref_no}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Expiry Date"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.task_document.expiry_date}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                        </h:outputText>            
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Status"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.task_document.direction}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('image')}">
+                                            <h:graphicImage value="image/#{item.task_document.document_url}" width="100px" height="100px" />
+                                            <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                        </p:commandLink>
+                                        <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('pdf')}">
+                                            <h:graphicImage value="resources/images/pdf.png" width="100px" height="100px" />
+                                            <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                        </p:commandLink>
+                                        <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('word')}">
+                                            <h:graphicImage value="resources/images/word.png" width="100px" height="100px" />
+                                            <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                        </p:commandLink>
+                                        <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('excel')}">
+                                            <h:graphicImage value="resources/images/excel.png" width="100px" height="100px" />
+                                            <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                        </p:commandLink>
+                                    </p:column>       
+                                    <p:column>
+                                        <p:commandButton id="upload_doc" value="Upload" action="#{task_documentBean.calldialog()}" process="@this" actionListener="#{task_documentBean.add(item.document_type)}">
+                                            <f:actionListener binding="#{document_typeBean.setDt(item.document_type)}"/>
+                                            <p:ajax event="dialogReturn" update="current_staff_documents_table"  listener="#{staffBean.ontaskDocumentChosen}" />
+                                        </p:commandButton>
+                                        &nbsp;
+                                        <p:commandButton id="remove_doc" value="Remove" action="#{staffBean.remove_current_staff_documents(item)}" process="@this" update="current_staff_documents_table">
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                                <h:outputText value="Skip to last: " />
+                                <h:selectBooleanCheckbox value="#{staffBean.skip}" />
+                            </p:tab>
+                            <p:tab title="Confirmation" id="confirm">
+                                <p:panel>
+                                    <center>
+                                        <p:commandButton value="Save" actionListener="#{staffBean.save}" update="@form,:notificationform" icon="ui-icon-disk" action="#{generalUtilities.refresh()}">
+                                        </p:commandButton>
+                                        <p:commandButton value="Cancel" actionListener="#{staffBean.cancel()}" process="@this" update="@form" action="#{generalUtilities.refresh()}" onkeypress="if (event.keycode == 13)
+                                                    return false;" />
+                                    </center>
+                                </p:panel>
+                                <p:panelGrid columns="1">
+                                    <p:panelGrid columns="1">
+                                        <p:panel header="Bio Data">    
+                                            <p:panelGrid columns="2">
+                                                <h:outputText value="DOB:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_date_of_birth}" title="Passport_date_of_birth">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <h:outputText value="Gender:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_sex}" title="Passport_sex"/>
+                                                <h:outputText value="Surname:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_surname}" title="Passport_surname"/>
+                                                <h:outputText value="Given Names:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_given_names}" title="Passport_given_names"/>
+                                                <h:outputText value="Nationality:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_nationality}" title="Passport_nationality"/>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                        <p:panel header="Passport">    
+                                            <p:panelGrid columns="2">
+                                                <!--<h:outputText value="Type:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_type}" title="Passport_type"/>
+                                                <h:outputText value="Country:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_country}" title="Passport_country"/>-->
+                                                <h:outputText value="Passport No:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_passport_no}" title="Passport_passport_no"/>
+                                                <!--<h:outputText value="Profession:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_profession}" title="Passport_profession"/>-->
+                                                <h:outputText value="Issued From:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_issuedby}" title="Passport_authority"/>
+                                                <!--<h:outputText value="Date of issue:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_date_of_issue}" title="Passport_date_of_issue">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>-->
+                                                <h:outputText value="Date of expiry:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_date_of_expiry}" title="Passport_date_of_expiry">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <!--<h:outputText value="Place of birth:"/>
+                                                <h:outputText value="#{staffBean.staff.pp_place_of_birth}" title="Passport_place_of_birth"/>-->
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1">
+                                        <p:panel header="Employment Details">
+                                            <p:panelGrid columns="4">
+                                                <h:outputText value="Staff type:"/>
+                                                <h:outputText value="#{staffBean.staff.staff_type.staff_type_name}" title="Staff type"/>
+                                                <h:outputText value="Email:"/>
+                                                <h:outputText value="#{staffBean.staff.email}" title="Email"/>
+                                                <h:outputText value="Phone 1:"/>
+                                                <h:outputText value="#{staffBean.staff.phone1}" title="phone1"/>
+                                                <h:outputText value="Phone 2:"/>
+                                                <h:outputText value="#{staffBean.staff.phone2}" title="phone2"/>
+                                                <h:outputText value="Postion:"/>
+                                                <h:outputText value="#{staffBean.staff.staff_post.staff_post_name}" title="Post"/>
+                                                <h:outputText value="Join date:"/>
+                                                <h:outputText value="#{staffBean.staff.join_date}" title="Join_date">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <h:outputText value="Contract Start date:"/>
+                                                <h:outputText value="#{staffBean.staff.contract_start_date}" title="contract_start_date">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <h:outputText value="Contract End date:"/>
+                                                <h:outputText value="#{staffBean.staff.contract_end_date}" title="contract_end_date">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <h:outputText value="Exit date:"/>
+                                                <h:outputText value="#{staffBean.staff.exit_date}" title="Exit_date">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                </h:outputText>
+                                                <h:outputText value="Years worked:"/>
+                                                <h:outputText value="#{generalUtilities.getDateDifference(staffBean.staff.join_date, generalUtilities.currentDate, 'years')}.#{generalUtilities.getDateDifference(staffBean.staff.join_date, generalUtilities.currentDate, 'months')}" rendered="#{staffBean.staff.exit_date==null}"/>
+                                                <h:outputText value="#{generalUtilities.getDateDifference(staffBean.staff.join_date, staffBean.staff.exit_date, 'years')}.#{generalUtilities.getDateDifference(staffBean.staff.join_date, staffBean.staff.exit_date, 'months')}" rendered="#{staffBean.staff.exit_date!=null}"/>
+                                                <h:outputText value="Company:"/>
+                                                <h:outputText value="#{staffBean.staff.company.company_name}" title="Company"/>
+                                                <h:outputText value="Airticket type:"/>
+                                                <h:outputText value="#{staffBean.staff.air_ticket_type.air_ticket_type_name}" title="Air_ticket_type"/>
+                                                <h:outputText value="Recruitment agent:"/>
+                                                <h:outputText value="#{staffBean.staff.recruit_agent.agent_surname.concat(' ').concat(staffBean.staff.recruit_agent.agent_other_names)}" title="Recruit_agent"/>
+                                                <h:outputText value="Exit mode:"/>
+                                                <h:outputText value="#{staffBean.staff.exit_mode.exit_mode_name}" title="Exit_mode"/>
+                                                <h:outputText value="Accomodation type:"/>
+                                                <h:outputText value="#{staffBean.staff.accom_type.accommodation_type_name}" title="Accom_type"/>
+                                                <h:outputText value="Cabinet:"/>
+                                                <h:outputText value="#{staffBean.staff.cabinet_no}#{staffBean.staff.cabinet_section}" title="Cabinet"/>
+                                            </p:panelGrid>
+                                            <br/>
+                                            <p:panel header="Ticket">
+                                                <p:panelGrid columns="6">
+                                                    <p:outputLabel value="Spouse Name:" rendered="#{staffBean.staff.spouse}" />
+                                                    <h:outputText value="#{staffBean.staff.spouse_name}" title="spouse_name"  rendered="#{staffBean.staff.spouse}"/>
+                                                    <p:outputLabel value="Spouse Passport No:" rendered="#{staffBean.staff.spouse}" />
+                                                    <h:outputText value="#{staffBean.staff.spouse_passport_no}" title="spouse_passport_no"  rendered="#{staffBean.staff.spouse}" />
+                                                    <p:outputLabel value="Spouse Visa Expiry Date:" rendered="#{staffBean.staff.spouse}" />
+                                                    <h:outputText value="#{staffBean.staff.spouse_visa_expiry_date}" title="spouse_visa_expiry_date"  rendered="#{staffBean.staff.spouse}">
+                                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:panelGrid>
+                                                <p:panelGrid columns="6">
+                                                    <p:outputLabel value="Kid 1 Name:"  rendered="#{staffBean.staff.kid1}" />
+                                                    <h:outputText value="#{staffBean.staff.kid1_name}" title="kid1_name"  rendered="#{staffBean.staff.kid1}"/>
+                                                    <p:outputLabel value="Kid 1 Passport No:"  rendered="#{staffBean.staff.kid1}" />
+                                                    <h:outputText value="#{staffBean.staff.kid1_passport_no}" title="kid1_passport_no"  rendered="#{staffBean.staff.kid1}"/>
+                                                    <p:outputLabel value="Kid 1 Visa Expiry Date:"  rendered="#{staffBean.staff.kid1}" />
+                                                    <h:outputText value="#{staffBean.staff.kid1_visa_expiry_date}" title="kid1_visa_expiry_date"  rendered="#{staffBean.staff.kid1}">
+                                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:panelGrid>
+                                                <p:panelGrid columns="6">
+                                                    <p:outputLabel value="Kid 2 Name:" rendered="#{staffBean.staff.kid2}" />
+                                                    <h:outputText value="#{staffBean.staff.kid2_name}" title="kid2_name"  rendered="#{staffBean.staff.kid2}"/>
+                                                    <p:outputLabel value="Kid 2 Passport No:"  rendered="#{staffBean.staff.kid2}" />
+                                                    <h:outputText value="#{staffBean.staff.kid2_passport_no}" title="kid2_passport_no"  rendered="#{staffBean.staff.kid2}" />
+                                                    <p:outputLabel value="Kid 2 Visa Expiry Date:"  rendered="#{staffBean.staff.kid2}" />
+                                                    <h:outputText value="#{staffBean.staff.kid2_visa_expiry_date}" title="kid2_visa_expiry_date"  rendered="#{staffBean.staff.kid2}">
+                                                        <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:panelGrid>
+                                            </p:panel>
+                                        </p:panel>
+
+                                        <p:panel header="Current Salary Details">
+                                            <p:dataTable value="#{staffBean.filtered_salaryscurrent()}" var="item">
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Currency type"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Salary"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.salary}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Start Date"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.startdate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Net Or Gross"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.is_net_or_gross}">
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:panel>
+                                        <p:panel header="Historical Salary Details">
+                                            <p:dataTable value="#{staffBean.filtered_salaryshistory()}" var="item">
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Currency type:"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Salary"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.salary}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Start Date"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.startdate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="End Date"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.enddate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Net Or Gross"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.is_net_or_gross}">
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:panel>
+                                        <p:panel header="Staff Current Documents">
+                                            <p:dataTable value="#{staffBean.current_staff_documentsList}" var="item" id="current_staff_documents_table_confirm" tableStyle="width:auto;" >
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Document Type"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Doc Ref No"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.task_document.document_ref_no}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Expiry Date"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.task_document.expiry_date}" title="Exit_date">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Status"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.task_document.direction}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('image')}">
+                                                        <h:graphicImage id="img_immigration" value="image/#{item.task_document.document_url}" width="100px" height="100px" />
+                                                        <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                                    </p:commandLink>
+                                                    <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('pdf')}">
+                                                        <h:graphicImage value="resources/images/pdf.png" width="100px" height="100px" />
+                                                        <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                                    </p:commandLink>
+                                                    <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('word')}">
+                                                        <h:graphicImage value="resources/images/word.png" width="100px" height="100px" />
+                                                        <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                                    </p:commandLink>
+                                                    <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('excel')}">
+                                                        <h:graphicImage value="resources/images/excel.png" width="100px" height="100px" />
+                                                        <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                                    </p:commandLink>
+                                                </p:column>  
+                                                <p:column>
+                                                    <p:commandLink ajax="false" title="Download" rendered="#{item.task_document!=null}" actionListener="#{task_documentBean.prepDownload(item.task_document.document_url)}" process="@this">  
+                                                        <p:graphicImage value="resources/images/download.gif" />  
+                                                        <p:fileDownload value="#{task_documentBean.download}" />
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                </p:panelGrid>
+                                <p:panel>
+                                    <center>
+                                        <p:commandButton value="Save" actionListener="#{staffBean.save}" update="@form,:notificationform" icon="ui-icon-disk" action="#{generalUtilities.refresh()}">
+                                        </p:commandButton>
+                                        <p:commandButton value="Cancel" actionListener="#{staffBean.cancel()}" process="@this" update="@form" action="#{generalUtilities.refresh()}" onkeypress="if (event.keycode == 13)
+                                                    return false;"/>
+                                    </center>
+                                </p:panel>
+                            </p:tab>
+                        </p:wizard>
+                        <center>
+                            <p:commandButton value="Cancel" actionListener="#{staffBean.cancel()}" update="@form" process="@this" action="#{generalUtilities.refresh()}" onkeypress="if (event.keycode == 13)
+                                        return false;"/>
+                        </center>
+                    </p:panel>
+                    <p:panel header="Delete/View" rendered="#{(staffBean.formstate.equals('delete') or staffBean.formstate.equals('view')) and staffBean.staff!=null}">
+                        <h:outputText value="Are you sure you want to delete?" rendered="#{staffBean.formstate.equals('delete')}"/>
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+                                <p:panel header="Bio Data">    
+                                    <p:panelGrid columns="2">
+                                        <!--<h:outputText value="Staff type:"/>
+                                        <h:outputText value="#{staffBean.staff.staff_type.staff_type_name}" title="Staff_type"/>-->
+                                        <h:outputText value="DOB:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_date_of_birth}" title="Passport_date_of_birth">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <h:outputText value="Gender:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_sex}" title="Passport_sex"/>
+                                        <h:outputText value="Surname:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_surname}" title="Passport_surname"/>
+                                        <h:outputText value="Given Names:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_given_names}" title="Passport_given_names"/>
+                                        <h:outputText value="Nationality:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_nationality}" title="Passport_nationality"/>
+                                        <h:outputText value="Age(Years):"/>
+                                        <h:outputText value="#{generalUtilities.getDateDifference(staffBean.staff.pp_date_of_birth, generalUtilities.currentDate, 'years')}.#{generalUtilities.getDateDifference(staffBean.staff.pp_date_of_birth, generalUtilities.currentDate, 'months')}"/>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <p:panel header="Passport">    
+                                    <p:panelGrid columns="2">
+                                        <!--<h:outputText value="Type:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_type}" title="Passport_type"/>
+                                        <h:outputText value="Country:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_nationality}" title="Passport_country"/>-->
+                                        <h:outputText value="Passport No:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_passport_no}" title="Passport_passport_no"/>
+                                        <!--<h:outputText value="Profession:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_profession}" title="Passport_profession"/>-->
+                                        <h:outputText value="Issued From:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_issuedby}" title="Passport_authority"/>
+                                        <!--<h:outputText value="Date of issue:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_date_of_issue}" title="Passport_date_of_issue">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>-->
+                                        <h:outputText value="Date of expiry:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_date_of_expiry}" title="Passport_date_of_expiry">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <!--<h:outputText value="Place of birth:"/>
+                                        <h:outputText value="#{staffBean.staff.pp_place_of_birth}" title="Passport_place_of_birth"/>-->
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1">
+                                <p:panel header="Employment Details">
+                                    <p:panelGrid columns="4">
+                                        <h:outputText value="Staff type:"/>
+                                        <h:outputText value="#{staffBean.staff.staff_type.staff_type_name}" title="Staff type"/>
+                                        <h:outputText value="Email:"/>
+                                        <h:outputText value="#{staffBean.staff.email}" title="Email"/>
+                                        <h:outputText value="Phone 1:"/>
+                                        <h:outputText value="#{staffBean.staff.phone1}" title="phone1"/>
+                                        <h:outputText value="Phone 2:"/>
+                                        <h:outputText value="#{staffBean.staff.phone2}" title="phone2"/>
+                                        <h:outputText value="Postion:"/>
+                                        <h:outputText value="#{staffBean.staff.staff_post.staff_post_name}" title="Post"/>
+                                        <h:outputText value="Join date:"/>
+                                        <h:outputText value="#{staffBean.staff.join_date}" title="Join_date">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <h:outputText value="Contract Start date:"/>
+                                        <h:outputText value="#{staffBean.staff.contract_start_date}" title="contract_start_date">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <h:outputText value="Contract End date:"/>
+                                        <h:outputText value="#{staffBean.staff.contract_end_date}" title="contract_end_date">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <h:outputText value="Exit date:"/>
+                                        <h:outputText value="#{staffBean.staff.exit_date}" title="Exit_date">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                        <h:outputText value="Years worked:"/>
+                                        <h:outputText value="#{generalUtilities.getDateDifference(staffBean.staff.join_date, generalUtilities.currentDate, 'years')}.#{generalUtilities.getDateDifference(staffBean.staff.join_date, generalUtilities.currentDate, 'months')}" rendered="#{staffBean.staff.exit_date==null}"/>
+                                        <h:outputText value="#{generalUtilities.getDateDifference(staffBean.staff.join_date, staffBean.staff.exit_date, 'years')}.#{generalUtilities.getDateDifference(staffBean.staff.join_date, staffBean.staff.exit_date, 'months')}" rendered="#{staffBean.staff.exit_date!=null}"/>
+                                        <h:outputText value="Company:"/>
+                                        <h:outputText value="#{staffBean.staff.company.company_name}" title="Company"/>
+                                        <h:outputText value="Airticket type:"/>
+                                        <h:outputText value="#{staffBean.staff.air_ticket_type.air_ticket_type_name}" title="Air_ticket_type"/>
+                                        <h:outputText value="Recruitment agent:"/>
+                                        <h:outputText value="#{staffBean.staff.recruit_agent.agent_surname.concat(' ').concat(staffBean.staff.recruit_agent.agent_other_names)}" title="Recruit_agent"/>
+                                        <h:outputText value="Exit mode:"/>
+                                        <h:outputText value="#{staffBean.staff.exit_mode.exit_mode_name}" title="Exit_mode"/>
+                                        <h:outputText value="Accomodation type:"/>
+                                        <h:outputText value="#{staffBean.staff.accom_type.accommodation_type_name}" title="Accom_type"/>
+                                        <h:outputText value="Cabinet:"/>
+                                        <h:outputText value="#{staffBean.staff.cabinet_no}#{staffBean.staff.cabinet_section}" title="Cabinet"/>
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:panel header="Ticket">
+                                        <p:panelGrid columns="6">
+                                            <p:outputLabel value="Spouse Name:" rendered="#{staffBean.staff.spouse}" />
+                                            <h:outputText value="#{staffBean.staff.spouse_name}" title="spouse_name"  rendered="#{staffBean.staff.spouse}"/>
+                                            <p:outputLabel value="Spouse Passport No:" rendered="#{staffBean.staff.spouse}" />
+                                            <h:outputText value="#{staffBean.staff.spouse_passport_no}" title="spouse_passport_no"  rendered="#{staffBean.staff.spouse}" />
+                                            <p:outputLabel value="Spouse Visa Expiry Date:" rendered="#{staffBean.staff.spouse}" />
+                                            <h:outputText value="#{staffBean.staff.spouse_visa_expiry_date}" title="spouse_visa_expiry_date"  rendered="#{staffBean.staff.spouse}">
+                                                <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:panelGrid>
+                                        <p:panelGrid columns="6">
+                                            <p:outputLabel value="Kid 1 Name:"  rendered="#{staffBean.staff.kid1}" />
+                                            <h:outputText value="#{staffBean.staff.kid1_name}" title="kid1_name"  rendered="#{staffBean.staff.kid1}"/>
+                                            <p:outputLabel value="Kid 1 Passport No:"  rendered="#{staffBean.staff.kid1}" />
+                                            <h:outputText value="#{staffBean.staff.kid1_passport_no}" title="kid1_passport_no"  rendered="#{staffBean.staff.kid1}"/>
+                                            <p:outputLabel value="Kid 1 Visa Expiry Date:"  rendered="#{staffBean.staff.kid1}" />
+                                            <h:outputText value="#{staffBean.staff.kid1_visa_expiry_date}" title="kid1_visa_expiry_date"  rendered="#{staffBean.staff.kid1}">
+                                                <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:panelGrid>
+                                        <p:panelGrid columns="6">
+                                            <p:outputLabel value="Kid 2 Name:" rendered="#{staffBean.staff.kid2}" />
+                                            <h:outputText value="#{staffBean.staff.kid2_name}" title="kid2_name"  rendered="#{staffBean.staff.kid2}"/>
+                                            <p:outputLabel value="Kid 2 Passport No:"  rendered="#{staffBean.staff.kid2}" />
+                                            <h:outputText value="#{staffBean.staff.kid2_passport_no}" title="kid2_passport_no"  rendered="#{staffBean.staff.kid2}" />
+                                            <p:outputLabel value="Kid 2 Visa Expiry Date:"  rendered="#{staffBean.staff.kid2}" />
+                                            <h:outputText value="#{staffBean.staff.kid2_visa_expiry_date}" title="kid2_visa_expiry_date"  rendered="#{staffBean.staff.kid2}">
+                                                <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                </p:panel>
+
+                                <p:panel header="Current Salary Details">
+                                    <p:dataTable value="#{staffBean.filtered_salaryscurrent()}" var="item">
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Currency type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Salary"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.salary}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Start Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.startdate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Net Or Gross"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.is_net_or_gross}">
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                                <p:panel header="Historical Salary Details">
+                                    <p:dataTable value="#{staffBean.filtered_salaryshistory()}" var="item">
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Currency type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.currency_type.currency_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Salary"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.salary}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Start Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.startdate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="End Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.enddate}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Net Or Gross"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.is_net_or_gross}">
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                                <p:panel header="Staff Current Documents">
+                                    <p:dataTable value="#{staffBean.current_staff_documentsList}" var="item" id="current_staff_documents_table2" selection="#{staffBean.selectedDocuments}" rowKey="#{item.current_staff_documents_id}" tableStyle="width:auto;" style="margin-bottom:0">
+                                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Document Type"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.document_type.doc_type_name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Expiry Date"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.task_document.expiry_date}" title="Exit_date">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Status"/>
+                                            </f:facet>
+                                            <h:outputText value="#{item.current_direction} (#{item.current_direction_reason})"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('image')}">
+                                                <h:graphicImage id="img_immigration" value="image/#{item.task_document.document_url}" width="100px" height="100px" />
+                                                <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                            </p:commandLink>
+                                            <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('pdf')}">
+                                                <h:graphicImage value="resources/images/pdf.png" width="100px" height="100px" />
+                                                <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                            </p:commandLink>
+                                            <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('word')}">
+                                                <h:graphicImage value="resources/images/word.png" width="100px" height="100px" />
+                                                <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                            </p:commandLink>
+                                            <p:commandLink action="#{doc_Preview_DialogBean.doc_preview_dialog()}" process="@this" rendered="#{generalUtilities.checkdoctype(item.task_document.document_url).equals('excel')}">
+                                                <h:graphicImage value="resources/images/excel.png" width="100px" height="100px" />
+                                                <f:setPropertyActionListener target="#{doc_Preview_DialogBean.url}" value="#{item.task_document.document_url}" />
+                                            </p:commandLink>
+                                        </p:column> 
+                                        <p:column>
+                                            <p:commandLink ajax="false" title="Download" rendered="#{item.task_document!=null}" actionListener="#{task_documentBean.prepDownload(item.task_document.document_url)}" process="@this">  
+                                                <p:graphicImage value="resources/images/download.gif" />  
+                                                <p:fileDownload value="#{task_documentBean.download}" />
+                                            </p:commandLink>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton process="@this,current_staff_documents_table2" icon="ui-icon-print" value="Print Selected Document(s)"  actionListener="#{task_documentBean.printalldocuments(staffBean.selectedDocuments)}" ajax="false">
+                                                <p:fileDownload value="#{task_documentBean.download}" />
+                                            </p:commandButton>
+                                            <p:commandButton process="@this,current_staff_documents_table2" icon="ui-icon-mail-closed" value="Email Selected Document(s)" action="#{taskBean.showEmailStaffDocumentDialog(staffBean.selectedDocuments)}"  actionListener="#{taskBean.setemailto(staffBean.selectedDocuments,staffBean.staff)}">
+                                            </p:commandButton>
+                                        </f:facet>
+                                    </p:dataTable>
+                                    <!--<p:commandButton ajax="false" value="Print All" title="Print All"  actionListener="#{task_documentBean.printalldocuments(staffBean.current_staff_documentsList)}" process="@this" icon="ui-icon-circle-arrow-s">  
+                                        <p:fileDownload value="#{task_documentBean.download}" />
+                                    </p:commandButton>-->
+                                </p:panel>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:commandButton value="Delete" rendered="#{staffBean.formstate.equals('delete')}" actionListener="#{staffBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                        <p:commandButton value="Cancel" action="#{staffBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                    </p:panel>
+                    <p:panel header="List" rendered="#{staffBean.formstate.equals('view') and staffBean.staff==null}">
+                        <center>
+                            <p:commandButton value="Add Staff" action="#{staffBean.add()}" update="@form" process="@this" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('FOLDER', 'Add')}" id="addbutton" oncomplete="focusSurname()" />
+                            <!--<p:outputLabel value="#{staffBean.formstate}"/>-->
+                        </center>
+                        <br/>
+                        <p:outputPanel>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Search By" for="searchby" />
+                                <p:selectOneMenu id="searchby" value="#{staffBean.searchby}" required="true" requiredMessage="The Search By field is required.">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="DOB" itemValue="Dob" />
+                                    <f:selectItem itemLabel="Name" itemValue="Name" />
+                                    <f:selectItem itemLabel="Passport No" itemValue="Passport" />
+                                    <f:selectItem itemLabel="Company" itemValue="Company" />
+                                    <p:ajax process="@this" update="@form" listener="#{staffBean.resetsearchvalues()}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Company:" for="company2" rendered="#{staffBean.searchby=='Company'}" />
+                                <p:selectOneMenu id="company2" value="#{staffBean.company_id}" rendered="#{staffBean.searchby=='Company'}" >
+                                    <f:selectItem itemLabel="" />
+                                    <c:forEach var="var" items="#{companyBean.companyList}" >
+                                        <f:selectItem itemLabel="#{var.company_name}" itemValue="#{var.company_id}" />
+                                    </c:forEach>
+                                    <p:ajax process="@this" update="@form"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Search Value" for="searchString" rendered="#{staffBean.searchby=='Passport' or staffBean.searchby=='Name'}" />
+                                <p:inputText id="searchString"  placeholder="Enter keyword" value="#{staffBean.searchString}" required="true" requiredMessage="The Search field is required." rendered="#{staffBean.searchby=='Passport' or staffBean.searchby=='Name'}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>   
+                                <p:outputLabel value="Search Value" for="searchStringdob" rendered="#{staffBean.searchby=='Dob'}" />
+                                <p:calendar id="searchStringdob"  placeholder="Enter keyword" value="#{staffBean.searchDate}" required="true" requiredMessage="The Search field is required." rendered="#{staffBean.searchby=='Dob'}" pattern="yyyy-MM-dd" navigator="true">
+                                    <p:ajax process="@this"/>
+                                </p:calendar>
+                            </p:panelGrid>
+                            <p:commandButton value="Search" update="@form" process="@this,searchString,searchby,searchStringdob" icon="ui-icon-search" id="searchbutton"/>
+                            <p:commandButton value="Reset" update="@form" process="@this" actionListener="#{staffBean.resetsearchvalues()}"/>
+                            <p:defaultCommand target="searchbutton" />
+                        </p:outputPanel>
+                        <p:dataTable value="#{staffBean.staffListFiltered}" var="item" lazy="true" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,50,100,500">
+                            <p:column>
+                                <h:commandLink  action="#{staffBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('FOLDER', 'Edit')}">
+                                    <f:ajax execute="@all" render="@form"/>
+                                    <f:setPropertyActionListener 
+                                        target="#{staffBean.formstate}" value="#{'edit'}" />
+                                </h:commandLink> | 
+                                <h:commandLink action="#{staffBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('FOLDER', 'Delete')}">
+                                    <f:setPropertyActionListener 
+                                        target="#{staffBean.formstate}" value="#{'delete'}" />
+                                    <f:ajax execute="@all" render="@form"/>
+                                </h:commandLink> | 
+                                <h:commandLink action="#{staffBean.view(item)}" value="View" immediate="true">
+                                    <f:setPropertyActionListener 
+                                        target="#{staffBean.formstate}" value="#{'view'}" />
+                                    <f:ajax execute="@all" render="@form"/>
+                                </h:commandLink>
+                            </p:column>
+
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Leave_days"/>
+                                </f:facet>
+                                <h:outputText value="#{item.leave_days}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_country"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_country}"/>
+                            </p:column>-->
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport no"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_passport_no}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Surname"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_surname}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Given names"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_given_names}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="DOB"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_date_of_birth}">
+                                    <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                            </p:column>
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_profession"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_profession}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_sex"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_sex}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_place_of_birth"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_place_of_birth}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_authority"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_authority}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_date_of_issue"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_date_of_issue}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                            </p:column>-->
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport expiry"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_date_of_expiry}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Position"/>
+                                </f:facet>
+                                <h:outputText value="#{item.post}"/>
+                            </p:column>-->
+                            <!--<p:column>
+                               <f:facet name="header">
+                                    <h:outputText value="Join_date"/>
+                                </f:facet>
+                                <h:outputText value="#{item.join_date}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Salary"/>
+                                </f:facet>
+                                <h:outputText value="#{item.salary}"/>
+                            </p:column>-->
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Is_active"/>
+                                </f:facet>
+                                <h:outputText value="#{item.is_active}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Exit_date"/>
+                                </f:facet>
+                                <h:outputText value="#{item.exit_date}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                            </p:column>-->
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Company"/>
+                                </f:facet>
+                                <h:outputText value="#{item.company.company_name}"/>
+                            </p:column>
+
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Salary_currency"/>
+                                </f:facet>
+                                <h:outputText value="#{item.salary_currency}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Air_ticket_type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.air_ticket_type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Recruit_agent"/>
+                                </f:facet>
+                                <h:outputText value="#{item.recruit_agent}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Staff_type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.staff_type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Passport_nationality"/>
+                                </f:facet>
+                                <h:outputText value="#{item.pp_nationality}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Accom_type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.accom_type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="User_detail"/>
+                                </f:facet>
+                                <h:outputText value="#{item.user_detail}"/>
+                            </p:column>-->
+                        </p:dataTable>
+                    </p:panel>
+                    <script type="text/javascript">
+                        function focusSurname() {
+                            jQuery("#pp_surname").focus();
+                        }
+                    </script>
+                </h:form>
+                <p:confirmDialog header="Please choose an action!" closable="false" global="true" showEffect="fade" hideEffect="explode"  widgetVar="confirmation"  message="Choice">
+                    <h:form>
+                        <p:commandButton value="Create '#{staffBean.activity.activity_name}' Task" actionListener="#{staffBean.createTaskAfterNewStaff}" icon="ui-icon-check"  process="@this" update=":staffform,:notificationform" >
+                            <f:actionListener binding="#{staffBean.hideconfirm()}"/>
+                        </p:commandButton>
+                        <p:commandButton value="Create Different Task" action="createtask?faces-redirect=true" actionListener="#{taskBean.add}" oncomplete="confirmation.hide()" process="@this" update=":staffform,:notificationform">
+                            <f:setPropertyActionListener target="#{taskBean.task.staff}" value="#{staffBean.staff}"/>
+                            <f:actionListener binding="#{staffBean.hideconfirm()}"/>
+                        </p:commandButton>
+                        <p:commandButton value="Cancel" process="@this" update=":staffform,:notificationform" >
+                            <f:actionListener binding="#{staffBean.hideconfirm()}"/>
+                        </p:commandButton>
+                    </h:form>
+                </p:confirmDialog>
+                <ui:include src="emaildocumentdialog.xhtml"/>
+            </ui:define>
+
+        </ui:composition>
+    </body>
+</html>

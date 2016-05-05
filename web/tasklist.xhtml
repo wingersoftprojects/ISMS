@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <h1><h:outputText value="Task List"/></h1>
+                        <p:dataTable value="#{taskBean.allTasks}" var="item">
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Complete_date"/>
+                                </f:facet>
+                                <h:outputText value="#{item.complete_date}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Completed_by"/>
+                                </f:facet>
+                                <h:outputText value="#{item.completed_by}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Approval_date"/>
+                                </f:facet>
+                                <h:outputText value="#{item.approval_date}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Comment"/>
+                                </f:facet>
+                                <h:outputText value="#{item.comment}"/>
+                            </p:column>-->
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Task_status"/>
+                                </f:facet>
+                                <p:commandLink value="#{item.task_status}">
+                                    <f:setPropertyActionListener target="#{taskBean.task}" value="#{item}" />
+                                    <p:ajax event="dialogReturn" update="@form" />
+                                    <f:actionListener binding="#{taskBean.calldialog()}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Activity"/>
+                                </f:facet>
+                                <h:outputText value="#{item.activity.activity_name}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Staff"/>
+                                </f:facet>
+                                <h:outputText value="#{item.staff.pp_surname.concat(' ').concat(item.staff.pp_given_names)}"/>
+                            </p:column>
+                            <!--<p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Assigned_user"/>
+                                </f:facet>
+                                <h:outputText value="#{item.assigned_user.username}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Approval_by"/>
+                                </f:facet>
+                                <h:outputText value="#{item.approval_by}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Approval_type"/>
+                                </f:facet>
+                                <h:outputText value="#{item.approval_type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Activity_outcome"/>
+                                </f:facet>
+                                <h:outputText value="#{item.activity_outcome}"/>
+                            </p:column>-->
+                        </p:dataTable>
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

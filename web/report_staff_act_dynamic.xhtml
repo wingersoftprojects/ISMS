@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="search_form">
+                        <p:panelGrid id="header" columns="6">
+                            <p:outputLabel value="Company:" for="company" />
+                            <p:selectOneMenu id="company" value="#{staffBean.company}" converter="companyConverter">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{companyBean.companyList}"
+                                               var="companyItem"
+                                               itemValue="#{companyItem}"
+                                               itemLabel="#{companyItem.company_name}"
+                                               />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Staff type:" for="staff_type" />
+                            <p:selectOneMenu id="staff_type" value="#{staffBean.staff_type}" converter="staff_typeConverter">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{staff_typeBean.staff_typeList}"
+                                               var="staff_typeItem"
+                                               itemValue="#{staff_typeItem}"
+                                               itemLabel="#{staff_typeItem.staff_type_name}"
+                                               />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Gender:" for="pp_sex" />
+                            <p:selectOneMenu id="pp_sex" value="#{staffBean.sexName}">
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItem itemLabel="Male" itemValue="Male" />
+                                <f:selectItem itemLabel="Female" itemValue="Female" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Accommodation:" for="accommodation_type" />
+                            <p:selectOneMenu id="accommodation_type" value="#{staffBean.accommodation_type}" converter="accommodation_typeConverter">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{accommodation_typeBean.accommodation_typeList}"
+                                               var="accommodation_typeItem"
+                                               itemValue="#{accommodation_typeItem}"
+                                               itemLabel="#{accommodation_typeItem.accommodation_type_name}"
+                                               />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Air ticket type:" for="air_ticket_type" />
+                            <p:selectOneMenu id="air_ticket_type" value="#{staffBean.air_ticket_type}" converter="air_ticket_typeConverter">
+                                <f:selectItem itemLabel="" />
+                                <f:selectItems value="#{air_ticket_typeBean.air_ticket_typeList}"
+                                               var="air_ticket_typeItem"
+                                               itemValue="#{air_ticket_typeItem}"
+                                               itemLabel="#{air_ticket_typeItem.air_ticket_type_name}"
+                                               />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+
+                            <p:commandButton value="Search" update="detail" icon="ui-icon-search" id="searchbutton"/>
+                        </p:panelGrid>
+
+                        <p:panel id="detail" header="#{staffBean.activeStaffByCompany.size()} Records returned">
+                            <p:chart rendered="#{staffBean.activeStaffByCompany.size()>0}" id="chart_activeStaffByCompany" type="line" model="#{staffBean.activeStaffByCompanyModel}" style="height:300px;"/>
+                            <p:scrollPanel>
+                                <p:dataTable rendered="#{staffBean.activeStaffByCompany.size()>0}" id="table_activeStaffByCompany" value="#{staffBean.activeStaffByCompany}" var="item" paginator="true" rows="25" tableStyle="width:auto;" paginatorTemplate="Page {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}">
+                                    <f:facet name="{Exporters}">
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/excel.png" width="24"/>
+                                            <p:dataExporter type="xls" target="table_activeStaffByCompany" fileName="activeStaffByCompany" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/pdf.png" width="24"/>
+                                            <p:dataExporter type="pdf" target="table_activeStaffByCompany" fileName="activeStaffByCompany"/>
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/csv.png" width="24"/>
+                                            <p:dataExporter type="csv" target="table_activeStaffByCompany" fileName="activeStaffByCompany" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="images/xml.png" width="24"/>
+                                            <p:dataExporter type="xml" target="table_activeStaffByCompany" fileName="activeStaffByCompany" />
+                                        </h:commandLink>
+                                    </f:facet>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Passport NU"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_passport_no}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Surname"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_surname}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Given names"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_given_names}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Sex"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_sex}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Nationality"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_nationality}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Staff type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.staff_type.staff_type_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Date of birth"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.pp_date_of_birth}">
+                                            <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Age"/>
+                                        </f:facet>
+                                        <h:outputText value="#{generalUtilities.getDateDifference(item.pp_date_of_birth, generalUtilities.currentDate, 'years')}.#{generalUtilities.getDateDifference(item.pp_date_of_birth, generalUtilities.currentDate, 'months')}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Join date"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.join_date}">
+                                            <f:convertDateTime pattern="dd/MMM/yyyy" timeZone="EAT" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="YearsWorked"/>
+                                        </f:facet>
+                                        <h:outputText value="#{generalUtilities.getDateDifference(item.join_date, generalUtilities.currentDate, 'years')}.#{generalUtilities.getDateDifference(item.join_date, generalUtilities.currentDate, 'months')}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Post"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.staff_post.staff_post_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Company"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.company.company_name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="PP"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 1)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="WP"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 2)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="VP1"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 3)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="VP2"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 4)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="SP1"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 5)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="SP2"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 6)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="BC"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 19)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="PSP"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 22)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="SB"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 10)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="CONT"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 18)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="CV"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 20)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="ACAD"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 21)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="CR"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 23)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="EXD"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 24)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="PCC"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 25)}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="PHOTO"/>
+                                        </f:facet>
+                                        <h:outputText value="#{taskBean.retrieveCSDbyStaffDocType(item.staff_id, 26)}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:scrollPanel>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

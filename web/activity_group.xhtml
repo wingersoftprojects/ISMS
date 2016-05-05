@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(activity_groupBean.formstate.equals('edit') or activity_groupBean.formstate.equals('add')) and activity_groupBean.activity_group!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity:" for="activity" />
+                                <p:autoComplete id="activity" value="#{activity_groupBean.activity_group.activity}"
+                                            completeMethod="#{activityBean.completeActivity}"
+                                            var="activity" itemLabel="#{activity.activity_name}" itemValue="#{activity}" 
+                                            converter="activityConverter" forceSelection="true"  required="true" requiredMessage="The activity field is required." >
+                                <p:column headerText="Activity" style="text-align: left">
+                                    <h:outputText value="#{activity.activity_name}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:ajax event="itemSelect" process="@this"></p:ajax>
+                                <p:ajax event="change" process="@this"></p:ajax>
+                            </p:autoComplete>
+                                <p:outputLabel value="Group_detail:" for="group_detail" />
+                                <p:selectOneMenu id="group_detail" value="#{activity_groupBean.activity_group.group_detail}" required="true" requiredMessage="The Group_detail field is required." converter="group_detailConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{group_detailBean.group_detailList}"
+                                                   var="group_detailItem"
+                                                   itemValue="#{group_detailItem}"
+                                                   itemLabel="#{group_detailItem.group_name}"
+                                                   />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{activity_groupBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{activity_groupBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(activity_groupBean.formstate.equals('delete') or activity_groupBean.formstate.equals('view')) and activity_groupBean.activity_group!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{activity_groupBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Activity:"/>
+                                <h:outputText value="#{activity_groupBean.activity_group.activity}" title="Activity"/>
+                                <h:outputText value="Group_detail:"/>
+                                <h:outputText value="#{activity_groupBean.activity_group.group_detail}" title="Group_detail"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{activity_groupBean.formstate.equals('delete')}" actionListener="#{activity_groupBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{activity_groupBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{activity_groupBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Activity Group" action="#{activity_groupBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{activity_groupBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{activity_groupBean.activity_groupList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{activity_groupBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_groupBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_groupBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_groupBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_groupBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_groupBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity.activity_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Group_detail"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.group_detail.group_name}"/>
+                                </p:column>                              
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

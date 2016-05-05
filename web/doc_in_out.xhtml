@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('FOLDER', 'Edit')}">
+                        <h1><h:outputText value="Document IN/OUT Status"/></h1>
+                        <p:panelGrid columns="2" id="doc_in_out">
+                            <p:outputLabel value="Staff:" for="staff" />
+                            <p:autoComplete id="staff" value="#{staffBean.staff}"
+                                            completeMethod="#{staffBean.completeStaff}"
+                                            var="staff" itemLabel="#{staff.pp_surname.concat(' ').concat(staff.pp_given_names)}" itemValue="#{staff}" 
+                                            converter="staffConverter" forceSelection="true"  required="true" requiredMessage="The Staff field is required." >
+                                <p:column headerText="Surname" style="text-align: left">
+                                    <h:outputText value="#{staff.pp_surname}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Given Names" style="text-align: left">
+                                    <h:outputText value="#{staff.pp_given_names}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:ajax listener="#{staffBean.refreshCurrentStaffDocs(staffBean.staff)}" event="itemSelect" process="@this" update="current_document_type"/>
+                                <p:ajax listener="#{staffBean.refreshCurrentStaffDocs(staffBean.staff)}" event="change" process="@this" update="current_document_type" rendered="#{staffBean.staff!=null}"/>
+                            </p:autoComplete>
+                            <p:outputLabel value="Current Document Type:" for="current_document_type" />
+                            <p:selectOneMenu id="current_document_type" value="#{staffBean.tempCurrent_staff_document}" converter="current_staff_documentsConverter" required="true" requiredMessage="The Current Document Type field is required.">
+                                <f:selectItem itemLabel="" />
+                                <f:selectItems value="#{staffBean.current_staff_documentsList}"
+                                               var="document_typeItem"
+                                               itemValue="#{document_typeItem}"
+                                               itemLabel="#{document_typeItem.document_type.doc_type_name}"
+                                               />
+                                <f:ajax event="change" render="direction reason"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Direction/Status:" for="direction" />
+                            <p:selectOneMenu id="direction" value="#{staffBean.tempCurrent_staff_document.current_direction}" required="true" requiredMessage="The Direction field is required.">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItem itemLabel="IN" itemValue="IN" />
+                                <f:selectItem itemLabel="OUT" itemValue="OUT" />
+                                <f:selectItem itemLabel="N/A" itemValue="N/A" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Reason:" for="reason" />
+                            <p:selectOneMenu id="reason" value="#{staffBean.tempCurrent_staff_document.current_direction_reason}" required="true" requiredMessage="The Direction reason field is required.">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItem itemLabel="Folder Update" itemValue="Folder Update" />
+                                <f:selectItem itemLabel="Leave" itemValue="Leave" />
+                                <f:selectItem itemLabel="Travel" itemValue="Travel" />
+                                <f:selectItem itemLabel="Resignation" itemValue="Resignation" />
+                                <f:selectItem itemLabel="Chasing Local Permits(DP, etc)" itemValue="Chasing Local Permits(DP, etc)" />
+                                <f:selectItem itemLabel="Other Immigration Related Activities" itemValue="Other Immigration Related Activities" />
+                                <f:selectItem itemLabel="Other" itemValue="Other" />
+                                <p:ajax process="@this" update="@form:doc_in_out"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel id="labelspecify" value="Other Specify:" for="current_direction_reason_other" rendered="#{staffBean.tempCurrent_staff_document.current_direction_reason=='Other'}" />
+                            <p:inputText id="current_direction_reason_other" value="#{staffBean.tempCurrent_staff_document.current_direction_reason_other}" title="current_direction_reason_other" rendered="#{staffBean.tempCurrent_staff_document.current_direction_reason=='Other'}" required="true" requiredMessage="Other Specify field is required"  />
+                        </p:panelGrid>
+                        <p:commandButton value="Save Doc Status" actionListener="#{staffBean.updateCurrentDocumentStatus(staffBean.tempCurrent_staff_document.current_staff_documents_id, staffBean.tempCurrent_staff_document.current_direction, staffBean.tempCurrent_staff_document.current_direction_reason)}"  process="@form" update="id_msgs id_msgs3" icon="ui-icon-disk" validateClient="true" />
+                        <!-- <p:commandButton value="Cancel" actionListener="#{staffBean.closeDialogDocStatus(staffBean.tempCurrent_staff_document)}"  process="@form" update="@form" icon="ui-icon-disk" validateClient="true" /> -->
+                        <p:messages id="id_msgs" closable="true" showDetail="true"/>
+                        <p:growl showDetail="true" id="id_msgs3"/>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

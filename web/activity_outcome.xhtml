@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <p:panel header="Add/Edit" rendered="#{(activity_outcomeBean.formstate.equals('edit') or activity_outcomeBean.formstate.equals('add')) and activity_outcomeBean.activity_outcome!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Activity_outcome_name:" for="activity_outcome_name" />
+                                <p:inputText id="activity_outcome_name" value="#{activity_outcomeBean.activity_outcome.activity_outcome_name}" title="Activity_outcome_name" required="true" requiredMessage="The Activity_outcome_name field is required."/>
+                                <p:outputLabel value="Outcome:" for="outcome" />
+                                <p:selectOneMenu id="outcome" value="#{activity_outcomeBean.activity_outcome.outcome}" required="true" requiredMessage="The Outcome field is required." converter="outcomeConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{outcomeBean.outcomeList}"
+                                                   var="outcomeItem"
+                                                   itemValue="#{outcomeItem}"
+                                                   itemLabel="#{outcomeItem.outcome_name}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Activity:" for="activity" />
+                                <p:selectOneMenu id="activity" value="#{activity_outcomeBean.activity_outcome.activity}" required="true" requiredMessage="The Activity field is required." converter="activityConverter">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{activityBean.activityList}"
+                                                   var="activityItem"
+                                                   itemValue="#{activityItem}"
+                                                   itemLabel="#{activityItem.activity_name}"
+                                                   />
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{activity_outcomeBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{activity_outcomeBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(activity_outcomeBean.formstate.equals('delete') or activity_outcomeBean.formstate.equals('view')) and activity_outcomeBean.activity_outcome!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{activity_outcomeBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Activity_outcome_name:"/>
+                                <h:outputText value="#{activity_outcomeBean.activity_outcome.activity_outcome_name}" title="Activity_outcome_name"/>
+                                <h:outputText value="Outcome:"/>
+                                <h:outputText value="#{activity_outcomeBean.activity_outcome.outcome.outcome_name}" title="Outcome"/>
+                                <h:outputText value="Activity:"/>
+                                <h:outputText value="#{activity_outcomeBean.activity_outcome.activity.activity_name}" title="Activity"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{activity_outcomeBean.formstate.equals('delete')}" actionListener="#{activity_outcomeBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{activity_outcomeBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{activity_outcomeBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Activity_outcome" action="#{activity_outcomeBean.add()}" update="@form" process="@all" icon="ui-icon-plus"/>
+                                <!--<p:outputLabel value="#{activity_outcomeBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{activity_outcomeBean.activity_outcomeList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{activity_outcomeBean.edit(item)}" value="Edit" immediate="true">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_outcomeBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_outcomeBean.delete(item)}" value="Delete" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_outcomeBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{activity_outcomeBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{activity_outcomeBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity_outcome_name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity_outcome_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Outcome"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.outcome.outcome_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Activity"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.activity.activity_name}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

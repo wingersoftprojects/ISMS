@@ -1,0 +1,214 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 30, 2014, 11:43:15 AM
+    Author     : bajuna
+*/
+body{
+    background-image: url('../..//images/bodybackground.png');
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+
+#outer{
+    border: 1px solid silver;
+    border-right: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+    -moz-box-shadow: inset 0 0 0 3px #7b6dc0;
+    -webkit-box-shadow: inset 0 0 0 3px #7b6dc0;
+    box-shadow: inset 0 0 0 3px #7b6dc0;
+    padding: 2px;
+    padding-bottom: 5px;
+    width: 80%;
+    max-width: 1170px;
+    margin-right: auto;  margin-left: auto;
+}
+#main-body{
+    /* background-color: #ece3a5; */
+}
+.logo{
+    padding-left: 20px;
+}
+.menu{
+    padding-top: 2%;
+}
+a:link, a:visited,a:hover {
+    color: black;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: black;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+a.ui-menuitem-link.ui-submenu-link.ui-corner-all:hover,a.ui-menuitem-link.ui-corner-all:hover {
+    background: red;
+}
+
+#top {
+    position: relative;
+    /*background-color: black;*/
+    color: white;
+    padding: 5px;
+    background: #45484d; /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  #45484d 0%, #000000 0%); /* FF3.6+ */
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#45484d), color-stop(0%,#000000)); /* Chrome,Safari4+ */
+    background: -webkit-radial-gradient(center, ellipse cover,  #45484d 0%,#000000 0%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover,  #45484d 0%,#000000 0%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover,  #45484d 0%,#000000 0%); /* IE10+ */
+    background: radial-gradient(ellipse at center,  #45484d 0%,#000000 0%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+    /* margin: 0px 0px 10px 0px; */
+}
+
+#bottom {
+    position: relative;
+    background-color: #c2dfef;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+}
+
+#left {
+    /* background-color: #ece3a5; */
+    /* padding-left: 5px; */
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+.right_content {
+    /* background-color: #ece3a5; */
+    /* padding: 5px; */
+    /* padding-left: 5px; */
+    /*padding-right: 5px;*/
+    /*margin-left: 170px;*/
+}
+
+.right_content {
+    /*background-color: #dddddd;*/
+    /*padding: 5px;*/
+    /*margin: 0px 170px 0px 170px;*/
+}
+
+#top a:link, #top a:visited {
+    /* color: white; */
+    font-weight : bold;
+    text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+    color: black;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+body {
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    color: #000000;  
+    margin: 10px;
+    color: black !important;
+}
+
+h1 {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    /* border-bottom: 1px solid #AFAFAF; */ 
+    font-size:  16px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    /* color: #D20005; */
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 0px !important;
+}
+
+.overduetasks{
+    //background: red !important; 
+    //border: 0px !important;
+    color: red !important;
+}
+.flaggedtasks{
+    /*    background: yellow !important;
+        color: black;
+        border: 0px !important;*/
+    color: black !important;
+}
+.pendingtasks{
+    /*    background: greenyellow !important;
+        border: 0px !important;*/
+    color: greenyellow !important;
+}
+
+.ca{
+    background: red !important;
+}
+
+.notifications{
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;    
+    color: black !important;
+}
+
+.ui-panelgrid .ui-panelgrid-cell {
+    vertical-align: top !important;
+}
+
+.ui-panel .ui-panel-title,.ui-accordion .ui-accordion-header {
+    color: brown !important;
+    font-weight: bold !important;
+    font-size: 12px !important;
+    /* background: antiquewhite; */
+}
+.ui-column-title{
+    color: blue !important;
+    font-weight: bold !important;
+}
+
+.ui-accordion-header{
+    background: #484848;
+}
+
+td>span {
+    font-size: large;
+}
+
+.ui-panelgrid td {
+    vertical-align: top !important;
+}
+.spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -50px; /* half width of the spinner gif */
+    margin-top: -50px; /* half height of the spinner gif */
+    text-align:center;
+    z-index:1234;
+    /*overflow: auto;*/
+    width: 100px; /* width of the spinner gif */
+    height: 102px; /*hight of the spinner gif +2px to fix IE8 issue */
+}

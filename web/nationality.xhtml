@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form rendered="#{loginBean.IsAllowed('SETTING', 'View')}">
+                        <p:panel header="Add/Edit" rendered="#{(nationalityBean.formstate.equals('edit') or nationalityBean.formstate.equals('add')) and nationalityBean.nationality!=null}">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Nationality_name:" for="nationality_name" />
+                                <p:inputText id="nationality_name" value="#{nationalityBean.nationality.nationality_name}" title="Nationality_name" required="true" requiredMessage="The Nationality_name field is required."/>
+                                <p:outputLabel value="Is_active:" for="is_active" />
+                                <p:selectOneMenu id="is_active" value="#{nationalityBean.nationality.is_active}" required="true" requiredMessage="The Is_active field is required.">
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{nationalityBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{nationalityBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(nationalityBean.formstate.equals('delete') or nationalityBean.formstate.equals('view')) and nationalityBean.nationality!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{nationalityBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Nationality_name:"/>
+                                <h:outputText value="#{nationalityBean.nationality.nationality_name}" title="Nationality_name"/>
+                                <h:outputText value="Is_active:"/>
+                                <h:outputText value="#{nationalityBean.nationality.is_active}" title="Is_active"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{nationalityBean.formstate.equals('delete')}" actionListener="#{nationalityBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{nationalityBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{nationalityBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Nationality" action="#{nationalityBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('SETTING', 'Add')}"/>
+                                <!--<p:outputLabel value="#{nationalityBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{nationalityBean.nationalityList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{nationalityBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{nationalityBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{nationalityBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('SETTING', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{nationalityBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{nationalityBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{nationalityBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Nationality_name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.nationality_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Is_active"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.is_active}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

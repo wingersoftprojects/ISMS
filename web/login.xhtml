@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Immigration Staffing Management System</title>
+        <link rel="shortcut icon" href="images/favicon.ico"/>
+        <h:outputStylesheet name="./css/bootstrap.css"/>
+        <h:outputStylesheet name="./css/custom.css"/>
+    </h:head>
+    <f:event listener="#{globalSettingsBean.readConnectionConfigurations()}" type="preRenderView" />
+    <h:body>
+        <div style="width: 30%; margin: 0 auto;">
+            <f:view>
+                <h:form>
+                    <p:messages closable="true"/>
+                    <p:panel>
+                        <center><img src="images/logo.png" alt=""/>
+                            <p:panelGrid columns="2" rendered="#{loginBean.action.equals('login')}">
+                                <p:outputLabel value="Username:" for="username" />
+                                <p:inputText id="username" value="#{loginBean.username}" title="Username" required="true" requiredMessage="The Username field is required."/>
+                                <p:outputLabel value="Password:" for="password" />
+                                <p:password id="password" value="#{loginBean.password}" title="Password" required="true" requiredMessage="The Password field is required."/>
+                                <p:commandButton value="Login" action="#{loginBean.login}" update="@form"/>
+                                <p:commandButton value="Change Password" update="@form" process="@this">
+                                    <f:setPropertyActionListener target="#{loginBean.action}" value="#{'changepw'}"/>
+                                </p:commandButton>
+                            </p:panelGrid>
+                            <p:panel rendered="#{loginBean.action.equals('changepw')}">
+                                <h1><h:outputText value="Change Password"/></h1>
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel value="Username:" for="username2" />
+                                    <p:inputText id="username2" value="#{loginBean.username}" title="Username" required="true" requiredMessage="The Current Username field is required."/>
+                                    <p:outputLabel value="Password:" for="password2" />
+                                    <p:password id="password2" value="#{loginBean.password}" title="Password" required="true" requiredMessage="The Current Password field is required."/>
+                                    <p:outputLabel value="New Password:" for="newpassword" />
+                                    <p:password id="newpassword" value="#{loginBean.newpassword}" title="Password" required="true" requiredMessage="The New Password field is required." match="retypenewpassword" feedback="true" inline="true"/>
+                                    <p:outputLabel value="Retype Password:" for="retypenewpassword" />
+                                    <p:password id="retypenewpassword" value="#{loginBean.retypenewpassword}" title="Password" required="true" requiredMessage="The Retype Password field is required."/>
+                                    <p:commandButton value="Change Password" update="@form" process="@this,username2,password2,newpassword,retypenewpassword" action="#{loginBean.changepassword}"/>
+                                    <p:commandButton value="Cancel" update="@form" process="@this">
+                                        <f:setPropertyActionListener target="#{loginBean.action}" value="#{'login'}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:outputLabel value="#{loginBean.messageString}" rendered="#{loginBean.messageString.length()!=0}" style="color: red"/>
+                        </center>
+                    </p:panel>
+                </h:form>
+            </f:view>
+
+        </div>
+        <!--<h:form>
+            <p:poll interval="15" oncomplete="show()" />
+        </h:form>
+        <script>
+            var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+
+            Notification.requestPermission(function (permission) {
+                // console.log(permission);
+            });
+
+            function show() {
+                var instance = new Notification('Email received', {
+                    body: 'You have a total of 3 unread emails<br/>You have a total of 3 unread emails', tag: 'Preset', icon: 'images/logo.png'
+                });
+                var audio = new Audio('images/notify.wav');
+                audio.play();
+                instance.onclick = function () {
+                    // Something to do
+                    window.focus();
+                    this.cancel();
+                };
+                instance.onerror = function () {
+                    // Something to do
+                };
+                instance.onshow = function () {
+                    // Something to do
+                };
+                instance.onclose = function () {
+                    // Something to do
+                }
+                ;
+            }
+        </script>-->
+    </h:body>
+</html>
+

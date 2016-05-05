@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <head>
+        <script  language="javascript">
+        </script> 
+    </head>
+    <body>
+
+        <ui:composition template="./layout.xhtml">
+            <ui:define name="metadata">
+                <f:metadata>
+                    <f:event listener="#{leave_transactionBean.init()}" type="preRenderView" />
+                </f:metadata>
+            </ui:define>
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="leave_form" rendered="#{loginBean.IsAllowed('LEAVE', 'View')}">
+                        <p:messages closable="true"/>
+                        <p:panel id="leave_add_edit_panel" header="Add/Edit" rendered="#{(leave_transactionBean.formstate.equals('edit') or leave_transactionBean.formstate.equals('add')) and leave_transactionBean.leave_transaction!=null}">
+                            <p:panelGrid columns="4">
+                                <p:outputLabel value="Staff:" for="staff" />
+                                <!--
+                                <p:selectOneMenu id="staff" value="#{leave_transactionBean.leave_transaction.staff}" converter="staffConverter" required="true" requiredMessage="The Staff field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{staffBean.staffList}"
+                                                   var="staffItem1"
+                                                   itemValue="#{staffItem1}"
+                                                   itemLabel="#{staffItem1.pp_surname} #{staffItem1.pp_given_names}"
+                                                   />
+                                    <p:ajax event="change" update="staff_leave_transaction_summary staff_leave_transaction"/>
+                                </p:selectOneMenu>
+                                -->
+                                <p:autoComplete id="staff" value="#{leave_transactionBean.leave_transaction.staff}"
+                                                completeMethod="#{staffBean.completeStaff}"
+                                                var="staff" itemLabel="#{staff.pp_surname.concat(' ').concat(staff.pp_given_names)}" itemValue="#{staff}" 
+                                                converter="staffConverter" forceSelection="true"  required="true" requiredMessage="The Staff field is required." >
+                                    <p:column headerText="Surname" style="text-align: left">
+                                        <h:outputText value="#{staff.pp_surname}">
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Given Names" style="text-align: left">
+                                        <h:outputText value="#{staff.pp_given_names}">
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:ajax event="itemSelect" process="@this" update="staff_leave_transaction_summary staff_leave_transaction"/>
+                                    <p:ajax event="change" process="@this" update="staff_leave_transaction_summary staff_leave_transaction"/>
+                                </p:autoComplete>
+
+                                <p:outputLabel value=""/>
+                                <p:outputLabel value=""/>
+
+                                <p:outputLabel value="Leave type:" for="leave_type" />
+                                <p:selectOneMenu id="leave_type" value="#{leave_transactionBean.leave_transaction.leave_type}" converter="leave_typeConverter" required="true" requiredMessage="The Leave_type field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{leave_typeBean.leave_typeList}"
+                                                   var="leave_typeItem"
+                                                   itemValue="#{leave_typeItem}"
+                                                   itemLabel="#{leave_typeItem.leave_type_name}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Leave year:" for="leave_year" />
+                                <p:selectOneMenu id="leave_year" value="#{leave_transactionBean.leave_transaction.leave_year}" required="true" requiredMessage="The Leave_year field is required.">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <c:forEach var="var" begin="1" end="20" >
+                                        <f:selectItem itemLabel="#{var}" itemValue="#{var}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Leave quarter:" for="leave_quarter" />
+                                <p:selectOneMenu id="leave_quarter" value="#{leave_transactionBean.leave_transaction.leave_quarter}" required="true" requiredMessage="The Leave_quarter field is required.">
+                                    <f:selectItem itemLabel="Q1" itemValue="Q1" />
+                                    <f:selectItem itemLabel="Q2" itemValue="Q2" />
+                                    <f:selectItem itemLabel="Q3" itemValue="Q3" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Days taken:" for="days_taken" />
+                                <p:inputText id="days_taken" value="#{leave_transactionBean.leave_transaction.days_taken}" title="Days_taken" required="true" requiredMessage="The Days_taken field is required."/>
+                                <p:outputLabel value="Leave start date:" for="start_date" />
+                                <p:calendar id="start_date" value="#{leave_transactionBean.leave_transaction.start_date}" pattern="dd/MMMM/yyyy" navigator="true" title="start_date" required="true" requiredMessage="The start_date field is required."/>
+                                <p:outputLabel value="Leave end date:" for="end_date" />
+                                <p:calendar id="end_date" value="#{leave_transactionBean.leave_transaction.end_date}" pattern="dd/MMMM/yyyy" navigator="true" title="end_date" required="true" requiredMessage="The end_date field is required."/>
+                                <p:outputLabel value="Approved by:" for="approved_by" />
+                                <!--
+                                <p:selectOneMenu id="approved_by" value="#{leave_transactionBean.leave_transaction.approved_by}" converter="staffConverter" required="true" requiredMessage="The Approved_by field is required.">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{staffBean.staffList}"
+                                                   var="staffItem2"
+                                                   itemValue="#{staffItem2}"
+                                                   itemLabel="#{staffItem2.pp_surname} #{staffItem2.pp_given_names}"
+                                                   />
+                                </p:selectOneMenu>
+                                -->
+                                <p:autoComplete id="approved_by" value="#{leave_transactionBean.leave_transaction.approved_by}"
+                                                completeMethod="#{staffBean.completeStaff}"
+                                                var="staff2" itemLabel="#{staff2.pp_surname.concat(' ').concat(staff2.pp_given_names)}" itemValue="#{staff2}" 
+                                                converter="staffConverter" forceSelection="true"  required="true" requiredMessage="The Approved by field is required." >
+                                    <p:column headerText="Surname" style="text-align: left">
+                                        <h:outputText value="#{staff2.pp_surname}">
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Given Names" style="text-align: left">
+                                        <h:outputText value="#{staff2.pp_given_names}">
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:ajax event="itemSelect" process="@this"/>
+                                    <p:ajax event="change" process="@this"/>
+                                </p:autoComplete>
+
+                                <p:outputLabel value="Paid leave?:" for="paid_leave" />
+                                <p:selectOneMenu id="paid_leave" value="#{leave_transactionBean.leave_transaction.paid_leave}" required="true" requiredMessage="The Paid_leave field is required.">
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <f:selectItem itemLabel="Yes" itemValue="Yes" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Ticket issued by:" for="ticket_issue_by" />
+                                <p:selectOneMenu id="ticket_issue_by" value="#{leave_transactionBean.leave_transaction.ticket_issue_by}" required="true" requiredMessage="The Ticket_issue_by field is required.">
+                                    <f:selectItem itemLabel="N/A" itemValue="N/A" />
+                                    <f:selectItem itemLabel="Self" itemValue="Self" />
+                                    <f:selectItem itemLabel="Company" itemValue="Company" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Comment:" for="comment" />
+                                <p:inputText id="comment" value="#{leave_transactionBean.leave_transaction.comment}" title="Comment" />
+
+                            </p:panelGrid>
+                            <p:commandButton value="Save" actionListener="#{leave_transactionBean.save}" process="@form" update="@form" icon="ui-icon-disk" validateClient="true" />
+                            <p:commandButton value="Cancel" action="#{leave_transactionBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                            <p:panelGrid columns="4" id="staff_leave_transaction_summary" rendered="#{leave_transactionBean.leave_transaction!=null}">
+                                <p:outputLabel value="Join.Date:" for="join_date2" />
+                                <h:outputText id="join_date2" value="#{leave_transactionBean.leave_transaction.staff.join_date}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                </h:outputText>
+                                <p:outputLabel value="Been.Here.For:" for="work_profile" />
+                                <p:inputText id="work_profile" style="width: 400px;color: blue  !important;font-weight: bold;" disabled="true" value="#{generalUtilities.getDateDifference(leave_transactionBean.leave_transaction.staff.join_date, generalUtilities.currentDate, 'years')} Years #{generalUtilities.getDateDifference(leave_transactionBean.leave_transaction.staff.join_date, generalUtilities.currentDate, 'months')} Months #{generalUtilities.getDateDifference(leave_transactionBean.leave_transaction.staff.join_date, generalUtilities.currentDate, 'weeks')} Weeks #{generalUtilities.getDateDifference(leave_transactionBean.leave_transaction.staff.join_date, generalUtilities.currentDate, 'days')} Days"/>
+                                <p:outputLabel value="TOTAL.LEAVE.TAKEN:" for="total_days" />
+                                <p:inputText id="total_days" style="color: blue  !important;font-weight: bold;" disabled="true" value="#{leave_transactionBean.getLeaveDaysTakenSinceJoin(leave_transactionBean.leave_transaction.staff)} Days"/>
+                                <p:outputLabel value="ELIGIBLE.LEAVE:" for="eligible" />
+                                <h:outputText id="eligible" style="color: red  !important;font-weight: bold;" value="#{leave_transactionBean.getLeaveDaysTakableNowV2(leave_transactionBean.leave_transaction.staff)} Days"/>
+                                <p:commandButton id="cmdbPrint" value="Print" icon="ui-icon-print" type="button">
+                                    <p:printer target="leave_form" rendered="false"/>
+                                </p:commandButton>
+                            </p:panelGrid>
+                            <p:dataTable id="staff_leave_transaction" value="#{leave_transactionBean.getLeave_transactionListByStaff(leave_transactionBean.leave_transaction.staff)}" var="item2">
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Year"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.leave_year}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Quarter"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.leave_quarter}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Leave type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.leave_type.leave_type_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Days"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.days_taken}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Start Date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.start_date}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="End Date"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item2.end_date}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="EAT" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel header="Delete/View" rendered="#{(leave_transactionBean.formstate.equals('delete') or leave_transactionBean.formstate.equals('view')) and leave_transactionBean.leave_transaction!=null}">
+                            <h:outputText value="Are you sure you want to delete?" rendered="#{leave_transactionBean.formstate.equals('delete')}"/>
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Staff:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.staff.pp_surname} #{leave_transactionBean.leave_transaction.staff.pp_given_names}" title="Staff"/>
+
+                                <h:outputText value="Leave type:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.leave_type.leave_type_name}" title="Leave_type"/>
+                                <h:outputText value="Days taken:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.days_taken}" title="Days_taken"/>
+
+                                <h:outputText value="Year:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.leave_year}" title="Leave_year"/>
+
+                                <h:outputText value="Quarter:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.leave_quarter}" title="Leave_quarter"/>
+
+                                <h:outputText value="Start date:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.start_date}" title="Start_date"/>
+                                <h:outputText value="End date:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.end_date}" title="End_date"/>
+
+                                <h:outputText value="Leave paid?:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.paid_leave}" title="Leave_paid"/>
+
+                                <h:outputText value="Ticket issued by:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.ticket_issue_by}" title="Ticket_issue_by"/>
+
+                                <h:outputText value="Approved by:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.approved_by.pp_surname} #{leave_transactionBean.leave_transaction.approved_by.pp_given_names}" title="Approved_by"/>
+                                <h:outputText value="Comment:"/>
+                                <h:outputText value="#{leave_transactionBean.leave_transaction.comment}" title="Comment"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Delete" rendered="#{leave_transactionBean.formstate.equals('delete')}" actionListener="#{leave_transactionBean.delete}" process="@form" update="@form" icon="ui-icon-close"/>
+                            <p:commandButton value="Cancel" action="#{leave_transactionBean.cancel()}" process="@form" update="@form" immediate="true" icon="ui-icon-cancel"/>
+                        </p:panel>
+                        <p:panel header="List" rendered="#{leave_transactionBean.formstate.equals('view')}">
+                            <center>
+                                <p:commandButton value="Add Leave Transaction" action="#{leave_transactionBean.add()}" update="@form" process="@all" icon="ui-icon-plus" rendered="#{loginBean.IsAllowed('LEAVE', 'Add')}"/>
+                                <!--<p:outputLabel value="#{leave_transactionBean.formstate}"/>-->
+                            </center>
+                            <br/>
+
+                            <p:dataTable value="#{leave_transactionBean.leave_transactionList}" var="item">
+                                <p:column>
+                                    <h:commandLink  action="#{leave_transactionBean.edit(item)}" value="Edit" immediate="true" rendered="#{loginBean.IsAllowed('LEAVE', 'Edit')}">
+                                        <f:ajax execute="@all" render="@form"/>
+                                        <f:setPropertyActionListener 
+                                            target="#{leave_transactionBean.formstate}" value="#{'edit'}" />
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{leave_transactionBean.delete(item)}" value="Delete" immediate="true" rendered="#{loginBean.IsAllowed('LEAVE', 'Delete')}">
+                                        <f:setPropertyActionListener 
+                                            target="#{leave_transactionBean.formstate}" value="#{'delete'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink action="#{leave_transactionBean.view(item)}" value="View" immediate="true">
+                                        <f:setPropertyActionListener 
+                                            target="#{leave_transactionBean.formstate}" value="#{'view'}" />
+                                        <f:ajax execute="@all" render="@form"/>
+                                    </h:commandLink>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Staff"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.staff.pp_surname} #{item.staff.pp_given_names}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Leave type"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_type.leave_type_name}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Days taken"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.days_taken}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Year"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_year}"/>
+                                </p:column> 
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Quarter"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.leave_quarter}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
